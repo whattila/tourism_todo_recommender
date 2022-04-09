@@ -1,19 +1,22 @@
 import 'package:tourism_todo_recommender/data/data_client.dart';
 
+import '../data/authenticator.dart';
 import '../data/todo.dart';
+import '../data/user.dart';
 
 /// {@template todos_repository}
 /// A repository that handles requests related to our touristic todos app:
 /// data acquisition and user handling.
 /// {@endtemplate}
 class TourismRepository {
-  // TODO: _authenticator inicializálása
   /// {@macro todos_repository}
   const TourismRepository({
-    required DataClient dataClient,
-  }) : _dataClient = dataClient;
+    required Authenticator authenticator,
+    required DataClient dataClient
+  }) : _authenticator = authenticator,
+        _dataClient = dataClient;
 
-  // TODO: final Authenticator _authenticator;
+  final Authenticator _authenticator;
   final DataClient _dataClient;
 
   /// Fetches a [List] of Todos fitting for a search term.
@@ -41,5 +44,26 @@ class TourismRepository {
   /// thrown.
   Future<void> deleteTodosFromFavorites(List<String> ids) => _dataClient.deleteTodosFromFavorites(ids);
 
-  // TODO: authenticator metódusai
+  /// Stream of [User] which will emit the current user when
+  /// the authentication state changes.
+  Stream<User> get user => _authenticator.user;
+
+  /// Creates a new user with the provided [email] and [password].
+  ///
+  /// Email and password combination for signing up/in is so common
+  /// that it can be assumed it will remain the method with every auth solution.
+  Future<void> signUp({required String email, required String password}) =>
+      _authenticator.signUp(email: email, password: password);
+
+  /// Signs in with the provided [email] and [password].
+  ///
+  /// Email and password combination for signing up/in is so common
+  /// that it can be assumed it will remain the method with every auth solution.
+  Future<void> logInWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) => _authenticator.logInWithEmailAndPassword(email: email, password: password);
+
+  /// Signs out the current user
+  Future<void> logOut() => _authenticator.logOut();
 }
