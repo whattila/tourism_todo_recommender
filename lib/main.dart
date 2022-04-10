@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tourism_todo_recommender/data/firebase_authenticator.dart';
 import 'package:tourism_todo_recommender/data/mock_data_client.dart';
 import 'package:tourism_todo_recommender/repository/tourism_repository.dart';
-import 'package:tourism_todo_recommender/widget/app.dart';
+import 'package:tourism_todo_recommender/widget/app/app.dart';
 
 import 'firebase_options.dart';
 

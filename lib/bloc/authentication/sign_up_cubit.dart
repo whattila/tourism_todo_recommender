@@ -1,12 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:tourism_todo_recommender/bloc/sign_up_state.dart';
+import 'package:tourism_todo_recommender/bloc/authentication/sign_up_state.dart';
+import '../../data/authenticator.dart';
+import '../../repository/tourism_repository.dart';
+import '../../widget/authentication/confirmed_password.dart';
+import '../../widget/authentication/email.dart';
+import '../../widget/authentication/password.dart';
 
-import '../data/authenticator.dart';
-import '../repository/tourism_repository.dart';
-import '../widget/confirmed_password.dart';
-import '../widget/email.dart';
-import '../widget/password.dart';
 
 class SignUpCubit extends Cubit<SignUpState> {
   SignUpCubit(this._tourismRepository) : super(const SignUpState());

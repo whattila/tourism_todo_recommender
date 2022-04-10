@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:tourism_todo_recommender/main.dart';
-import 'package:tourism_todo_recommender/widget/app.dart';
+import 'package:tourism_todo_recommender/widget/app/app.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

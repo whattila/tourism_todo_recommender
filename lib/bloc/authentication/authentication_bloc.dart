@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import '../data/user.dart';
-import '../repository/tourism_repository.dart';
+import '../../data/user.dart';
+import '../../repository/tourism_repository.dart';
 import 'authentication_event.dart';
 import 'authentication_state.dart';
 
