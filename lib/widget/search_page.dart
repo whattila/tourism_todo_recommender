@@ -6,11 +6,8 @@ class SearchPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     // TODO: az ugye nem baj, hogy itt az alap widgeteket használja?
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search'),
-      ),
-      body: const Center(
+    return const Scaffold(
+      body: Center(
         child: Text('Search'),
       ),
     );

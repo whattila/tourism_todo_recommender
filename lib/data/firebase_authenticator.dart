@@ -10,6 +10,7 @@ class FirebaseAuthenticator extends Authenticator {
   FirebaseAuthenticator({firebase_auth.FirebaseAuth? firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance;
 
+  User? _user;
   final firebase_auth.FirebaseAuth _firebaseAuth;
 
   @override
@@ -54,9 +55,13 @@ class FirebaseAuthenticator extends Authenticator {
   Stream<User> get user {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
       final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
+      _user = user;
       return user;
     });
   }
+
+  @override
+  User get currentUser => _user ?? User.empty;
 }
 
 class FirebaseSignUpWithEmailAndPasswordFailure extends SignUpWithEmailAndPasswordFailure {

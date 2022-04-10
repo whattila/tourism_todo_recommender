@@ -48,6 +48,10 @@ class TourismRepository {
   /// the authentication state changes.
   Stream<User> get user => _authenticator.user;
 
+  /// Returns the current user.
+  /// Defaults to [User.empty] if there is no logged-in user.
+  User get currentUser => _authenticator.currentUser;
+
   /// Creates a new user with the provided [email] and [password].
   ///
   /// Email and password combination for signing up/in is so common

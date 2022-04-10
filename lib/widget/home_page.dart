@@ -4,12 +4,16 @@ import 'package:tourism_todo_recommender/widget/saved_page.dart';
 import 'package:tourism_todo_recommender/widget/search_page.dart';
 import 'package:tourism_todo_recommender/widget/upload_todo_page.dart';
 
+import '../bloc/authentication_bloc.dart';
+import '../bloc/authentication_event.dart';
 import '../bloc/home_cubit.dart';
 import '../bloc/home_state.dart';
 import 'map_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  static Page page() => const MaterialPage<void>(child: HomePage());
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,16 @@ class HomeView extends StatelessWidget {
     final selectedTab = context.select((HomeCubit cubit) => cubit.state.tab);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Tourism Todo Recommender'),
+        actions: <Widget>[
+          IconButton(
+            key: const Key('homePage_logout_iconButton'),
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () => context.read<AuthenticationBloc>().add(LogoutRequested()),
+          )
+        ],
+      ),
       body: IndexedStack(
         index: selectedTab.index,
         children: const [SearchPage(), SavedPage(), MapPage()],

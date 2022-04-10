@@ -47,6 +47,9 @@ abstract class Authenticator {
   /// the authentication state changes.
   Stream<User> get user;
 
+  /// Returns the current user.
+  User get currentUser;
+
   /// Creates a new user with the provided [email] and [password].
   ///
   /// Email and password combination for signing up/in is so common
