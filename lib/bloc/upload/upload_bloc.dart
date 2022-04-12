@@ -1,0 +1,66 @@
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:tourism_todo_recommender/bloc/upload/upload_event.dart';
+import 'package:tourism_todo_recommender/bloc/upload/upload_state.dart';
+import '../../data/todo.dart';
+import '../../repository/tourism_repository.dart';
+
+class UploadBloc extends Bloc<UploadEvent, UploadState> {
+  UploadBloc({
+    required TourismRepository tourismRepository,
+    required Todo? initialTodo,
+  })  : _tourismRepository = tourismRepository,
+        super(
+        UploadState(
+          initialTodo: initialTodo,
+          shortDescription: initialTodo?.shortDescription ?? '',
+          nature: initialTodo?.nature ?? '',
+          address: initialTodo?.address ?? '',
+          detailedDescription: initialTodo?.detailedDescription ?? '',
+        ),
+      ) {
+    on<UploadShortDescriptionChanged>(_onShortDescriptionChanged);
+    on<UploadNatureChanged>(_onNatureChanged);
+    on<UploadAddressChanged>(_onAddressChanged);
+    on<UploadDetailedDescriptionChanged>(_onDetailedDescriptionChanged);
+    on<UploadSubmitted>(_onSubmitted);
+  }
+
+  final TourismRepository _tourismRepository;
+
+  void _onShortDescriptionChanged(
+      UploadShortDescriptionChanged event,
+      Emitter<UploadState> emit,
+      ) {
+    emit(state.copyWith(shortDescription: event.shortDescription));
+  }
+
+  void _onNatureChanged(
+      UploadNatureChanged event,
+      Emitter<UploadState> emit,
+      ) {
+    emit(state.copyWith(nature: event.nature));
+  }
+
+  void _onAddressChanged(
+      UploadAddressChanged event,
+      Emitter<UploadState> emit,
+      ) {
+    emit(state.copyWith(address: event.address));
+  }
+
+  void _onDetailedDescriptionChanged(
+      UploadDetailedDescriptionChanged event,
+      Emitter<UploadState> emit,
+      ) {
+    emit(state.copyWith(detailedDescription: event.detailedDescription));
+  }
+
+  Future<void> _onSubmitted(
+      UploadSubmitted event,
+      Emitter<UploadState> emit,
+      ) async {
+    // ez nyilván nem a végleges, a véglegeshez nézzük meg a példát újra
+      emit(state.copyWith(status: UploadStatus.success));
+  }
+}

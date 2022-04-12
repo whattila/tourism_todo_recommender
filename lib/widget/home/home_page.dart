@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tourism_todo_recommender/widget/saved_page.dart';
 import 'package:tourism_todo_recommender/widget/search_page.dart';
-import 'package:tourism_todo_recommender/widget/upload_todo_page.dart';
+import 'package:tourism_todo_recommender/widget/upload/upload_page.dart';
 import '../../bloc/authentication/authentication_bloc.dart';
 import '../../bloc/authentication/authentication_event.dart';
 import '../../bloc/home/home_cubit.dart';
@@ -48,8 +48,7 @@ class HomeView extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         key: const Key('homeView_uploadTodo_floatingActionButton'),
-        // TODO: may need to be modified (add route method to UploadTodoPage)
-        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const UploadTodoPage())),
+        onPressed: () => Navigator.of(context).push(UploadPage.route()),
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomAppBar(

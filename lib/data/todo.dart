@@ -13,8 +13,8 @@ class Todo extends Equatable {
   const Todo({
     required this.id,
     required this.shortDescription,
-    required this.type,
-    required this.location,
+    required this.nature,
+    required this.address,
     required this.detailedDescription
   });
 
@@ -28,16 +28,16 @@ class Todo extends Equatable {
   /// Cannot be empty.
   final String shortDescription;
 
-  /// The type of the todo.
-  /// There are no constraints to the type, besides that it must be a valid string.
+  /// The nature of the todo.
+  /// There are no constraints to the nature, besides that it must be a valid string.
   /// Cannot be empty.
-  final String type;
+  final String nature;
 
-  /// The location (address) of the todo, where it can be found and done.
-  /// There are no constraints to the location, besides that it must be a valid string.
+  /// The address (address) of the todo, where it can be found and done.
+  /// There are no constraints to the address, besides that it must be a valid string.
   /// Geocoding will be run on this value, but it does not have to be successful.
   /// Cannot be empty.
-  final String location;
+  final String address;
 
   // Ide lehet még jönnek a koordináták is...
   // Meg a képek is...
@@ -54,21 +54,21 @@ class Todo extends Equatable {
   Todo copyWith({
     String? id,
     String? shortDescription,
-    String? type,
-    String? location,
+    String? nature,
+    String? address,
     String? detailedDescription
   }) {
     return Todo(
       id: id ?? this.id,
       shortDescription: shortDescription ?? this.shortDescription,
-      type: type ?? this.type,
-      location: location ?? this.location,
+      nature: nature ?? this.nature,
+      address: address ?? this.address,
       detailedDescription: detailedDescription ?? this.detailedDescription
     );
   }
 
   @override
   // TODO: update if something changes
-  List<Object?> get props => [id, shortDescription, type, location, detailedDescription];
+  List<Object?> get props => [id, shortDescription, nature, address, detailedDescription];
 
 }
