@@ -60,7 +60,24 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       UploadSubmitted event,
       Emitter<UploadState> emit,
       ) async {
-    // ez nyilván nem a végleges, a véglegeshez nézzük meg a példát újra
+    // TODO: nem engedhetjük, hogy üres sztringeket adjon meg a felhasználó
+    // TODO: szerverről jövő hibák kezelése
+    // TODO: hiányzó adatok
+    emit(state.copyWith(status: UploadStatus.loading));
+    final todo =
+    (state.initialTodo ?? const Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: ''))
+        .copyWith(
+      shortDescription: state.shortDescription,
+      nature: state.nature,
+      address: state.address,
+      detailedDescription: state.detailedDescription
+    );
+
+    try {
+      await _tourismRepository.uploadTodo(todo);
       emit(state.copyWith(status: UploadStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: UploadStatus.failure));
+    }
   }
 }

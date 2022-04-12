@@ -1,14 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-// Ez JsonSerializable? Ha igen, ide kellenek a megfelelő annotációk! De nem hiszem, hogy arra szükség lesz...
 /// {@template todo}
 /// A single tourism todo item.
 /// [Todo]s are immutable and can be copied using [copyWith]
 /// {@endtemplate}
 class Todo extends Equatable {
-  // Mikor először létrehozunk egy Todot, nem adunk id-t, mert majd a Cloud Firestore ad.
-  // Egyébként viszont meg kell adni. Hogy lehet ezt megoldani?
-  // Itt lehet az a megoldás is, ami a Todo példában látható (pl. assert). Melyik legyen?
+  // All arguments must be a non-empty string to maintain domain integrity
+  // and therefore must be initialized
+  // the only exception is when we create and upload an object:
+  // id will be an empty string, but it will receive its value from Cloud Firestore shortly
   /// {@macro user}
   const Todo({
     required this.id,
@@ -47,7 +48,6 @@ class Todo extends Equatable {
   /// Cannot be empty.
   final String detailedDescription;
 
-  // Ez így biztos jó?
   /// Returns a copy of this todo with the given values updated.
   ///
   /// {@macro todo}
@@ -67,8 +67,18 @@ class Todo extends Equatable {
     );
   }
 
+  /// Returns a map representation of this Todo
+  /// for uploading it to Cloud Firestore
+  /// {@macro todo}
+  Map<String, dynamic> toMap() => <String, dynamic>{
+    'id' : id,
+    'shortDescription' : shortDescription,
+    'nature' : nature,
+    'address' : address,
+    'detailedDescription' : detailedDescription
+  };
+
   @override
-  // TODO: update if something changes
   List<Object?> get props => [id, shortDescription, nature, address, detailedDescription];
 
 }

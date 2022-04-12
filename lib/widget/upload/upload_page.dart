@@ -33,7 +33,7 @@ class UploadPage extends StatelessWidget {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            const SnackBar(content: Text('Success')),
+            const SnackBar(content: Text('Todo uploaded successfully')),
           );
         Navigator.of(context).pop();
       },
