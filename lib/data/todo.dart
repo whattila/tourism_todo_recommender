@@ -13,6 +13,8 @@ class Todo extends Equatable {
   /// {@macro user}
   const Todo({
     required this.id,
+    required this.uploaderId,
+    required this.uploaderName,
     required this.shortDescription,
     required this.nature,
     required this.address,
@@ -23,6 +25,16 @@ class Todo extends Equatable {
   ///
   /// Cannot be empty.
   final String id;
+
+  /// The unique identifier of the user who created this item.
+  ///
+  /// Cannot be empty.
+  final String uploaderId;
+
+  /// The name of the user who created this item.
+  ///
+  /// Cannot be empty.
+  final String uploaderName;
 
   /// The short description of the todo.
   ///
@@ -53,6 +65,8 @@ class Todo extends Equatable {
   /// {@macro todo}
   Todo copyWith({
     String? id,
+    String? uploaderId,
+    String? uploaderName,
     String? shortDescription,
     String? nature,
     String? address,
@@ -60,6 +74,8 @@ class Todo extends Equatable {
   }) {
     return Todo(
       id: id ?? this.id,
+      uploaderId: uploaderId ?? this.uploaderId,
+      uploaderName: uploaderName ?? this.uploaderName,
       shortDescription: shortDescription ?? this.shortDescription,
       nature: nature ?? this.nature,
       address: address ?? this.address,
@@ -68,10 +84,12 @@ class Todo extends Equatable {
   }
 
   /// Returns a map representation of this Todo
-  /// for uploading it to Cloud Firestore
+  /// for uploading it to Cloud Firestore.
   /// {@macro todo}
   Map<String, dynamic> toMap() => <String, dynamic>{
     'id' : id,
+    'uploaderId': uploaderId,
+    'uploaderName': uploaderName,
     'shortDescription' : shortDescription,
     'nature' : nature,
     'address' : address,
@@ -79,6 +97,6 @@ class Todo extends Equatable {
   };
 
   @override
-  List<Object?> get props => [id, shortDescription, nature, address, detailedDescription];
+  List<Object?> get props => [id, uploaderId, uploaderName, shortDescription, nature, address, detailedDescription];
 
 }

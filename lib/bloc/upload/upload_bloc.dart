@@ -62,11 +62,17 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       ) async {
     // TODO: nem engedhetjük, hogy üres sztringeket adjon meg a felhasználó
     // TODO: szerverről jövő hibák kezelése
-    // TODO: hiányzó adatok
     emit(state.copyWith(status: UploadStatus.loading));
-    final todo =
-    (state.initialTodo ?? const Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: ''))
-        .copyWith(
+    final todo = (state.initialTodo ?? Todo(
+            nature: '',
+            detailedDescription: '',
+            shortDescription: '',
+            id: '',
+            address: '',
+            uploaderName: _tourismRepository.currentUser.name ?? '', // the second case cannot happen as an unauthenticated user cannot upload
+            uploaderId: _tourismRepository.currentUser.id
+          )
+        ).copyWith(
       shortDescription: state.shortDescription,
       nature: state.nature,
       address: state.address,
