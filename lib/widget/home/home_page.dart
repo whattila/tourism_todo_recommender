@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tourism_todo_recommender/widget/saved_page.dart';
-import 'package:tourism_todo_recommender/widget/search_page.dart';
 import 'package:tourism_todo_recommender/widget/upload/upload_page.dart';
 import '../../bloc/authentication/authentication_bloc.dart';
 import '../../bloc/authentication/authentication_event.dart';
 import '../../bloc/home/home_cubit.dart';
 import '../../bloc/home/home_state.dart';
 import '../map_page.dart';
+import '../search/search_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);

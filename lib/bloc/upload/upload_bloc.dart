@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_event.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_state.dart';
 import '../../data/todo.dart';
@@ -62,17 +61,10 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       ) async {
     // TODO: nem engedhetjük, hogy üres sztringeket adjon meg a felhasználó
     // TODO: szerverről jövő hibák kezelése
+    // TODO: create displayName properly and use that
     emit(state.copyWith(status: UploadStatus.loading));
-    final todo = (state.initialTodo ?? Todo(
-            nature: '',
-            detailedDescription: '',
-            shortDescription: '',
-            id: '',
-            address: '',
-            uploaderName: _tourismRepository.currentUser.name ?? '', // the second case cannot happen as an unauthenticated user cannot upload
-            uploaderId: _tourismRepository.currentUser.id
-          )
-        ).copyWith(
+    final todo = (state.initialTodo ?? Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: '', uploaderName: _tourismRepository.currentUser.email ?? '', uploaderId: _tourismRepository.currentUser.id))
+        .copyWith(
       shortDescription: state.shortDescription,
       nature: state.nature,
       address: state.address,
