@@ -5,6 +5,7 @@ import '../../bloc/search/search_event.dart';
 import '../../bloc/search/search_state.dart';
 import '../../data/todo.dart';
 import '../../repository/tourism_repository.dart';
+import '../detail/detail_page.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -66,11 +67,6 @@ class _SearcherState extends State<_Searcher> {
             onPressed: () {
               final value = _textController.value.text;
               _searchBloc.add(SearchLaunched(text: value));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(_textController.value.text),
-                ),
-              );
             },
             icon: const Icon(Icons.search),
             label: const Text("SEARCH"),
@@ -132,11 +128,13 @@ class _SearchResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
+      padding: const EdgeInsets.all(16.0),
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
         return _SearchResultItem(item: items[index]);
       },
+      separatorBuilder: (context, i) => const Divider()
     );
   }
 }
@@ -153,11 +151,16 @@ class _SearchResultItem extends StatelessWidget {
         child: Image.network(item.owner.avatarUrl),
       ),*/
       title: Text(item.shortDescription),
-      /*onTap: () async {
-        if (await canLaunch(item.htmlUrl)) {
-          await launch(item.htmlUrl);
-        }
-      },*/
+      subtitle: Text(item.address),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (context) => DetailPage(todo: item)
+          )
+        );
+      }
     );
   }
 }

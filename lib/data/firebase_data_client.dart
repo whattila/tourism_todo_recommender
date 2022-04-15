@@ -27,17 +27,30 @@ class FirebaseDataClient extends DataClient {
   }
 
   @override
-  Future<List<Todo>> searchTodos(String searchTerm) {
-    // TODO: implement searchTodos
-    throw UnimplementedError();
+  Future<List<Todo>> searchTodos(String searchTerm) async {
+    // this is fine when we have relatively few documents
+    // if we had many, we would implement a full-text search solution with a third-party service like Algolia or Elastic
+    List<Todo> _matchingTodos = [];
+    final _querySnapshot = await _firebaseFirestore.collection('todos').get();
+    _querySnapshot.docs.forEach((doc) {
+      final todo = Todo.fromJson(doc.data());
+      if (todo.address.toLowerCase().contains(searchTerm) ||
+          todo.shortDescription.toLowerCase().contains(searchTerm) ||
+          todo.uploaderName.toLowerCase().contains(searchTerm) ||
+          todo.detailedDescription.toLowerCase().contains(searchTerm) ||
+          todo.nature.toLowerCase().contains(searchTerm)
+      ) {
+        _matchingTodos.add(todo);
+      }
+    });
+    return _matchingTodos;
   }
 
   @override
   Future<void> uploadTodo(Todo todo) async {
     final document = _firebaseFirestore.collection('todos').doc();
-    // TODO: ez kell?
-    todo.copyWith(id: document.id);
-    await document.set(todo.toMap());
+    final trueTodo = todo.copyWith(id: document.id);
+    await document.set(trueTodo.toJson());
   }
   
 }

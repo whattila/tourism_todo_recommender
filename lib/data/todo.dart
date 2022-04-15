@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 /// {@template todo}
@@ -20,6 +19,20 @@ class Todo extends Equatable {
     required this.address,
     required this.detailedDescription
   });
+
+  /// Creates a Todo from a json (map) representation
+  /// when querying from Cloud Firestore
+  Todo.fromJson(Map<String, dynamic> json)
+      : this(
+          id: (json['id'] != null) ? json['id'] as String : '',
+          uploaderId: (json['uploaderId'] != null) ? json['uploaderId'] as String : '',
+          uploaderName: (json['uploaderName'] != null) ? json['uploaderName'] as String : '',
+          shortDescription: (json['shortDescription'] != null) ? json['shortDescription'] as String : '',
+          nature: (json['nature'] != null) ? json['nature'] as String : '',
+          address: (json['address'] != null) ? json['address'] as String : '',
+          detailedDescription: (json['detailedDescription'] != null) ? json['detailedDescription'] as String : '',
+        );
+
 
   /// The unique identifier of the todo.
   ///
@@ -83,10 +96,10 @@ class Todo extends Equatable {
     );
   }
 
-  /// Returns a map representation of this Todo
+  /// Returns a json (map) representation of this Todo
   /// for uploading it to Cloud Firestore.
   /// {@macro todo}
-  Map<String, dynamic> toMap() => <String, dynamic>{
+  Map<String, dynamic> toJson() => <String, dynamic>{
     'id' : id,
     'uploaderId': uploaderId,
     'uploaderName': uploaderName,

@@ -24,21 +24,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       SearchLaunched event,
       Emitter<SearchState> emit,
       ) async {
-    // ez csak ideiglenes természetesen...
-    emit(SearchStateSuccess([]));
-    /*final searchTerm = event.text;
-
-    if (searchTerm.isEmpty) return emit(SearchStateEmpty());
-
+    final searchTerm = event.text;
     emit(SearchStateLoading());
-
     try {
-      final results = await _tourismRepository.search(searchTerm);
-      emit(SearchStateSuccess(results.items));
+       final results = await _tourismRepository.searchTodos(searchTerm);
+       emit(SearchStateSuccess(results));
     } catch (error) {
-      emit(error is SearchResultError
-          ? SearchStateError(error.message)
-          : SearchStateError('something went wrong'));
-    }*/
+       emit(const SearchStateError('Something went wrong'));
+    }
   }
 }
