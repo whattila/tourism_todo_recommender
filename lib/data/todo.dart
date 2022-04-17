@@ -17,6 +17,8 @@ class Todo extends Equatable {
     required this.shortDescription,
     required this.nature,
     required this.address,
+    this.latitude,
+    this.longitude,
     required this.detailedDescription
   });
 
@@ -30,6 +32,8 @@ class Todo extends Equatable {
           shortDescription: (json['shortDescription'] != null) ? json['shortDescription'] as String : '',
           nature: (json['nature'] != null) ? json['nature'] as String : '',
           address: (json['address'] != null) ? json['address'] as String : '',
+          latitude: (json['latitude'] != null) ? json['latitude'] as double : null,
+          longitude: (json['longitude'] != null) ? json['longitude'] as double : null,
           detailedDescription: (json['detailedDescription'] != null) ? json['detailedDescription'] as String : '',
         );
 
@@ -65,7 +69,13 @@ class Todo extends Equatable {
   /// Cannot be empty.
   final String address;
 
-  // Ide lehet még jönnek a koordináták is...
+  /// The coordinates of this todo, if geocoding was successful
+  /// If it was not, they are null
+  final double? latitude;
+  /// The coordinates of this todo, if geocoding was successful
+  /// If it was not, they are null
+  final double? longitude;
+
   // Meg a képek is...
 
   /// The detailed description of the todo.
@@ -83,6 +93,8 @@ class Todo extends Equatable {
     String? shortDescription,
     String? nature,
     String? address,
+    double? latitude,
+    double? longitude,
     String? detailedDescription
   }) {
     return Todo(
@@ -92,6 +104,8 @@ class Todo extends Equatable {
       shortDescription: shortDescription ?? this.shortDescription,
       nature: nature ?? this.nature,
       address: address ?? this.address,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       detailedDescription: detailedDescription ?? this.detailedDescription
     );
   }
@@ -106,10 +120,12 @@ class Todo extends Equatable {
     'shortDescription' : shortDescription,
     'nature' : nature,
     'address' : address,
+    'latitude': latitude,
+    'longitude': longitude,
     'detailedDescription' : detailedDescription
   };
 
   @override
-  List<Object?> get props => [id, uploaderId, uploaderName, shortDescription, nature, address, detailedDescription];
+  List<Object?> get props => [id, uploaderId, uploaderName, shortDescription, nature, address, latitude, longitude, detailedDescription];
 
 }

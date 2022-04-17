@@ -52,5 +52,15 @@ class FirebaseDataClient extends DataClient {
     final trueTodo = todo.copyWith(id: document.id);
     await document.set(trueTodo.toJson());
   }
+
+  @override
+  Stream<List<Todo>> getTodos() {
+    Stream<QuerySnapshot> stream = _firebaseFirestore.collection('todos').snapshots();
+    return stream.map(
+            (qShot) => qShot.docs.map(
+                (doc) => Todo.fromJson(doc.data() as Map<String, dynamic>)
+        ).toList()
+    );
+  }
   
 }

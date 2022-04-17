@@ -8,6 +8,9 @@ abstract class DataClient {
   /// {@macro data_client}
   const DataClient();
 
+  /// Provides a [Stream] of all todos uploaded through the app.
+  Stream<List<Todo>> getTodos();
+
   /// Fetches a [List] of Todos fitting for a search term.
   Future<List<Todo>> searchTodos(String searchTerm);
 

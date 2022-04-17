@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_event.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_state.dart';
+import '../../data/geocoder.dart';
 import '../../data/todo.dart';
 import '../../repository/tourism_repository.dart';
 
@@ -63,11 +64,14 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     // TODO: szerverről jövő hibák kezelése
     // TODO: create displayName properly and use that
     emit(state.copyWith(status: UploadStatus.loading));
+    Geolocation? location = await _tourismRepository.getLocationFromAddress(state.address);
     final todo = (state.initialTodo ?? Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: '', uploaderName: _tourismRepository.currentUser.email ?? '', uploaderId: _tourismRepository.currentUser.id))
         .copyWith(
       shortDescription: state.shortDescription,
       nature: state.nature,
       address: state.address,
+      latitude: location?.latitude,
+      longitude: location?.longitude,
       detailedDescription: state.detailedDescription
     );
 

@@ -1,6 +1,7 @@
 import 'package:tourism_todo_recommender/data/data_client.dart';
 
 import '../data/authenticator.dart';
+import '../data/geocoder.dart';
 import '../data/todo.dart';
 import '../data/user.dart';
 
@@ -12,12 +13,18 @@ class TourismRepository {
   /// {@macro todos_repository}
   const TourismRepository({
     required Authenticator authenticator,
-    required DataClient dataClient
+    required DataClient dataClient,
+    required Geocoder geocoder
   }) : _authenticator = authenticator,
-        _dataClient = dataClient;
+        _dataClient = dataClient,
+        _geocoder = geocoder;
 
   final Authenticator _authenticator;
   final DataClient _dataClient;
+  final Geocoder _geocoder;
+
+  /// Provides a [Stream] of all todos uploaded through the app.
+  Stream<List<Todo>> getTodos() => _dataClient.getTodos();
 
   /// Fetches a [List] of Todos fitting for a search term.
   Future<List<Todo>> searchTodos(String searchTerm) => _dataClient.searchTodos(searchTerm);
@@ -70,4 +77,7 @@ class TourismRepository {
 
   /// Signs out the current user
   Future<void> logOut() => _authenticator.logOut();
+
+  /// Returns the coordinates for a geographical place, or null if no results were found or an error occurred
+  Future<Geolocation?> getLocationFromAddress(String address) => _geocoder.getLocationFromAddress(address);
 }

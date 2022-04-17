@@ -6,6 +6,7 @@ import 'package:tourism_todo_recommender/repository/tourism_repository.dart';
 import 'package:tourism_todo_recommender/widget/app/app.dart';
 
 import 'data/firebase_data_client.dart';
+import 'data/geocoder.dart';
 import 'firebase_options.dart';
 
 // Ez a sok cucc csak a tesztelési időszakra kell?
@@ -18,7 +19,8 @@ Future<void> main() {
       );
       final tourismRepository = TourismRepository(
           authenticator: FirebaseAuthenticator(),
-          dataClient: FirebaseDataClient()
+          dataClient: FirebaseDataClient(),
+          geocoder: Geocoder()
       );
       await tourismRepository.user.first; // ez biztos kell?
       runApp(App(tourismRepository: tourismRepository));
