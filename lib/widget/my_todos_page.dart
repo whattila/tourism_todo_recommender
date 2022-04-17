@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SavedPage extends StatelessWidget{
-  const SavedPage({Key? key}) : super(key: key);
+class MyTodosPage extends StatelessWidget{
+  const MyTodosPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('Saved'),
+        child: Text('MyTodos'),
       ),
     );
   }

@@ -6,6 +6,7 @@ import '../../bloc/search/search_state.dart';
 import '../../data/todo.dart';
 import '../../repository/tourism_repository.dart';
 import '../detail/detail_page.dart';
+import '../map/map_page.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -160,7 +161,25 @@ class _SearchResultItem extends StatelessWidget {
             builder: (context) => DetailPage(todo: item)
           )
         );
-      }
+      },
+      trailing: TextButton(
+        onPressed: () {
+          if (item.latitude != null && item.longitude != null) {
+            Navigator.of(context).push<void>(MaterialPageRoute(
+                builder: (context) => MapPage(todo: item)
+            ));
+          }
+          else {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                const SnackBar(content: Text('This todo does not have valid coordinates')),
+              );
+          }
+          //Navigator.of(context).push<void>(SignUpPage.route());
+        },
+        child: const Text('SHOW ON MAP'),
+      ),
     );
   }
 }

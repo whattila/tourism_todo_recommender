@@ -6,7 +6,7 @@ import '../../bloc/authentication/authentication_bloc.dart';
 import '../../bloc/authentication/authentication_event.dart';
 import '../../bloc/home/home_cubit.dart';
 import '../../bloc/home/home_state.dart';
-import '../map_page.dart';
+import '../my_todos_page.dart';
 import '../search/search_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -43,7 +43,7 @@ class HomeView extends StatelessWidget {
       ),
       body: IndexedStack(
         index: selectedTab.index,
-        children: const [SearchPage(), SavedPage(), MapPage()],
+        children: const [SearchPage(), SavedPage(), MyTodosPage()],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(

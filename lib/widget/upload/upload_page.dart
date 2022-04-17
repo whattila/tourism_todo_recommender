@@ -66,7 +66,7 @@ class UploadView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: Text(isNewTodo ? 'Upload' : 'Update'),
+        label: Text(isNewTodo ? 'UPLOAD' : 'UPDATE'),
         backgroundColor: status.isLoadingOrSuccess
             ? fabBackgroundColor.withOpacity(0.5)
             : fabBackgroundColor,
