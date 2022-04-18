@@ -24,7 +24,7 @@ class TourismRepository {
   final Geocoder _geocoder;
 
   /// Provides a [Stream] of all todos uploaded through the app.
-  Stream<List<Todo>> getTodos() => _dataClient.getTodos();
+  Stream<List<Todo>> getOwnTodos(String userId) => _dataClient.getOwnTodos(userId);
 
   /// Fetches a [List] of Todos fitting for a search term.
   Future<List<Todo>> searchTodos(String searchTerm) => _dataClient.searchTodos(searchTerm);

@@ -9,7 +9,7 @@ abstract class DataClient {
   const DataClient();
 
   /// Provides a [Stream] of all todos uploaded through the app.
-  Stream<List<Todo>> getTodos();
+  Stream<List<Todo>> getOwnTodos(String userId);
 
   /// Fetches a [List] of Todos fitting for a search term.
   Future<List<Todo>> searchTodos(String searchTerm);

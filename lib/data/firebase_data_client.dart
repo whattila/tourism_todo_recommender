@@ -48,14 +48,22 @@ class FirebaseDataClient extends DataClient {
 
   @override
   Future<void> uploadTodo(Todo todo) async {
-    final document = _firebaseFirestore.collection('todos').doc();
-    final trueTodo = todo.copyWith(id: document.id);
-    await document.set(trueTodo.toJson());
+    if (todo.id == '') {
+      final document = _firebaseFirestore.collection('todos').doc();
+      final trueTodo = todo.copyWith(id: document.id);
+      await document.set(trueTodo.toJson());
+    }
+    else {
+      await _firebaseFirestore.collection('todos').doc(todo.id).set(todo.toJson());
+    }
   }
 
   @override
-  Stream<List<Todo>> getTodos() {
-    Stream<QuerySnapshot> stream = _firebaseFirestore.collection('todos').snapshots();
+  Stream<List<Todo>> getOwnTodos(String userId) {
+    Stream<QuerySnapshot> stream = _firebaseFirestore
+        .collection('todos')
+        .where('uploaderId', isEqualTo: userId)
+        .snapshots();
     return stream.map(
             (qShot) => qShot.docs.map(
                 (doc) => Todo.fromJson(doc.data() as Map<String, dynamic>)

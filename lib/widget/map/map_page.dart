@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../data/todo.dart';
 
 const LatLng DEFAULT_LOCATION = LatLng(42.7477863,-71.1699932);
-const double PIN_VISIBLE_POSITION = 20;
+const double PIN_VISIBLE_POSITION = 70;
 const double PIN_INVISIBLE_POSITION = -220;
 
 class MapPage extends StatefulWidget {
