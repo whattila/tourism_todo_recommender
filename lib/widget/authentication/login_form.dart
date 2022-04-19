@@ -28,9 +28,11 @@ class LoginForm extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const Text('Tourism todo recommender', style: TextStyle(fontSize: 25)),
+              const SizedBox(height: 16),
               Image.asset(
-                'assets/bloc_logo_small.png',
-                height: 120,
+                'assets/world3.png',
+                height: 150,
               ),
               const SizedBox(height: 16),
               _EmailInput(),
@@ -62,6 +64,7 @@ class _EmailInput extends StatelessWidget {
             labelText: 'email',
             helperText: '',
             errorText: state.email.invalid ? 'invalid email' : null,
+            border: const OutlineInputBorder()
           ),
         );
       },
@@ -84,6 +87,7 @@ class _PasswordInput extends StatelessWidget {
             labelText: 'password',
             helperText: '',
             errorText: state.password.invalid ? 'invalid password' : null,
+            border: const OutlineInputBorder()
           ),
         );
       },
@@ -105,12 +109,15 @@ class _LoginButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
-            primary: const Color(0xFFFFD600),
+            primary: Colors.deepOrange,
           ),
           onPressed: state.status.isValidated
               ? () => context.read<LoginCubit>().logInWithCredentials()
               : null,
-          child: const Text('LOGIN'),
+          child: const Text(
+              'LOGIN',
+              style: TextStyle(color: Colors.white),
+          ),
         );
       },
     );

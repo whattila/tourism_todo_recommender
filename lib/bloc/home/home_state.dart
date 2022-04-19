@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 /// These values represent the tabs available on the ButtomAppBar
-enum HomeTab {search, saved, map}
+enum HomeTab {search, own}
 
 /// {@template home_state}
 /// It keeps record of which tab is selected on the ButtomAppBar

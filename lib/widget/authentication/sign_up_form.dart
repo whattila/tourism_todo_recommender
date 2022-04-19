@@ -54,6 +54,7 @@ class _EmailInput extends StatelessWidget {
             labelText: 'email',
             helperText: '',
             errorText: state.email.invalid ? 'invalid email' : null,
+            border: const OutlineInputBorder()
           ),
         );
       },
@@ -76,6 +77,7 @@ class _PasswordInput extends StatelessWidget {
             labelText: 'password',
             helperText: '',
             errorText: state.password.invalid ? 'invalid password' : null,
+            border: const OutlineInputBorder()
           ),
         );
       },
@@ -103,6 +105,7 @@ class _ConfirmPasswordInput extends StatelessWidget {
             errorText: state.confirmedPassword.invalid
                 ? 'passwords do not match'
                 : null,
+            border: const OutlineInputBorder()
           ),
         );
       },
@@ -124,12 +127,15 @@ class _SignUpButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
-            primary: Colors.orangeAccent,
+            primary: Colors.deepOrange,
           ),
           onPressed: state.status.isValidated
               ? () => context.read<SignUpCubit>().signUpFormSubmitted()
               : null,
-          child: const Text('SIGN UP'),
+          child: const Text(
+            'LOGIN',
+            style: TextStyle(color: Colors.white),
+          ),
         );
       },
     );

@@ -71,6 +71,10 @@ class _SearcherState extends State<_Searcher> {
             },
             icon: const Icon(Icons.search),
             label: const Text("SEARCH"),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            ),
           ),
         ]
     );
@@ -148,9 +152,7 @@ class _SearchResultItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      /*leading: CircleAvatar(
-        child: Image.network(item.owner.avatarUrl),
-      ),*/
+      tileColor: Colors.white70,
       title: Text(item.shortDescription),
       subtitle: Text(item.address),
       onTap: () {

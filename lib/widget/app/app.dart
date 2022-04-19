@@ -33,7 +33,7 @@ class AppView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange
+        primarySwatch: Colors.orange,
       ),
       // TODO: darkTheme, localization?
       home: FlowBuilder<AuthenticationStatus>(

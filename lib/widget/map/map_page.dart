@@ -44,7 +44,7 @@ class MapPageState extends State<MapPage> {
           children: [
             Positioned.fill(
               child: GoogleMap(
-                mapType: MapType.hybrid,
+                mapType: MapType.normal,
                 initialCameraPosition: CameraPosition(
                   target: todoLatLng,
                   zoom: 14.4746,
@@ -79,11 +79,11 @@ class MapPageState extends State<MapPage> {
       _markers.add(Marker(
         markerId: const MarkerId('todoPin'),
         position: todoLatLng,
-          onTap: () {
-            setState(() {
-              pinPillPosition = PIN_VISIBLE_POSITION;
-            });
-          }
+        onTap: () {
+          setState(() {
+            pinPillPosition = PIN_VISIBLE_POSITION;
+          });
+        }
       ));
     });
   }
@@ -117,11 +117,15 @@ class MapBottomPill extends StatelessWidget{
               style: TextStyle(
                   color: Colors.grey[700],
                   fontWeight: FontWeight.bold,
-                  fontSize: 15
+                  fontSize: 20
               )
           ),
-          Text(todo.address),
-          Text(todo.nature)
+          Text(todo.address,
+              style: const TextStyle(fontSize: 17)
+          ),
+          Text(todo.nature,
+              style: const TextStyle(fontSize: 17)
+          ),
         ],
       ),
     );

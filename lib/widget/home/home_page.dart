@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tourism_todo_recommender/widget/saved_page.dart';
 import 'package:tourism_todo_recommender/widget/upload/upload_page.dart';
 import '../../bloc/authentication/authentication_bloc.dart';
 import '../../bloc/authentication/authentication_event.dart';
@@ -43,18 +42,20 @@ class HomeView extends StatelessWidget {
       ),
       body: IndexedStack(
         index: selectedTab.index,
-        children: const [SearchPage(), SavedPage(), OwnTodosPage()],
+        children: const [SearchPage(), OwnTodosPage()],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         key: const Key('homeView_uploadTodo_floatingActionButton'),
         onPressed: () => Navigator.of(context).push(UploadPage.route()),
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.upload),
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
       ),
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _HomeTabButton(
               groupValue: selectedTab,
@@ -63,13 +64,8 @@ class HomeView extends StatelessWidget {
             ),
             _HomeTabButton(
               groupValue: selectedTab,
-              value: HomeTab.saved,
-              icon: const Icon(Icons.favorite),
-            ),
-            _HomeTabButton(
-              groupValue: selectedTab,
-              value: HomeTab.map,
-              icon: const Icon(Icons.map),
+              value: HomeTab.own,
+              icon: const Icon(Icons.auto_stories),
             ),
           ],
         ),
@@ -94,9 +90,8 @@ class _HomeTabButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () => context.read<HomeCubit>().setTab(value),
-      iconSize: 32,
-      color:
-      groupValue != value ? null : Theme.of(context).colorScheme.secondary,
+      iconSize: 42,
+      color: groupValue != value ? null : Theme.of(context).colorScheme.secondary,
       icon: icon,
     );
   }

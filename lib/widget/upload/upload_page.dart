@@ -52,10 +52,8 @@ class UploadView extends StatelessWidget {
           (UploadBloc bloc) => bloc.state.isNewTodo,
     );
 
-    final theme = Theme.of(context);
-    final floatingActionButtonTheme = theme.floatingActionButtonTheme;
-    final fabBackgroundColor = floatingActionButtonTheme.backgroundColor ??
-        theme.colorScheme.secondary;
+    const fabBackgroundColor = Colors.deepOrange;
+    const fabForegroundColor = Colors.white;
 
     return Scaffold(
       appBar: AppBar(
@@ -70,6 +68,7 @@ class UploadView extends StatelessWidget {
         backgroundColor: status.isLoadingOrSuccess
             ? fabBackgroundColor.withOpacity(0.5)
             : fabBackgroundColor,
+        foregroundColor: fabForegroundColor,
         onPressed: status.isLoadingOrSuccess
             ? null
             : () => context.read<UploadBloc>().add(const UploadSubmitted()),
