@@ -65,8 +65,10 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     // TODO: create displayName properly and use that
     emit(state.copyWith(status: UploadStatus.loading));
     Geolocation? location = await _tourismRepository.getLocationFromAddress(state.address);
-    final todo = (state.initialTodo ?? Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: '', uploaderName: _tourismRepository.currentUser.email ?? '', uploaderId: _tourismRepository.currentUser.id))
+    final todo = (state.initialTodo ?? const Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: '', uploaderName: '', uploaderId: ''))
         .copyWith(
+      uploaderName: _tourismRepository.currentUser.email,
+      uploaderId: _tourismRepository.currentUser.id,
       shortDescription: state.shortDescription,
       nature: state.nature,
       address: state.address,

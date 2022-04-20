@@ -19,7 +19,7 @@ class MapPage extends StatefulWidget {
 class MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _controller = Completer();
   final Set<Marker> _markers = Set<Marker>();
-  double pinPillPosition = PIN_VISIBLE_POSITION;
+  double pinPillPosition = PIN_INVISIBLE_POSITION;
   late LatLng todoLatLng;
 
   @override

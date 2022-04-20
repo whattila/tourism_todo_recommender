@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 /// These values represent the tabs available on the ButtomAppBar
-enum HomeTab {search, own}
+enum HomeTab { search, own }
 
 /// {@template home_state}
 /// It keeps record of which tab is selected on the ButtomAppBar
@@ -16,4 +16,16 @@ class HomeState extends Equatable {
 
   @override
   List<Object> get props => [tab];
+
+  /// The string representation of the selected tab.
+  /// tab can only have the two HomeTab values as it is non-nullable so this function will always return.
+  @override
+  String toString() {
+    switch (tab) {
+      case HomeTab.search:
+        return 'Search for todos';
+      case HomeTab.own:
+        return 'Your uploaded todos';
+    }
+  }
 }

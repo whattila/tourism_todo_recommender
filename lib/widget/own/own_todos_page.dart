@@ -49,10 +49,10 @@ class OwnTodosView extends StatelessWidget {
               } else if (state.status != OwnTodosStatus.success) {
                 return const SizedBox();
               } else {
-                return Center(
+                return const Center(
                   child: Text(
                     'You have not uploaded any todos yet',
-                    style: Theme.of(context).textTheme.caption,
+                    style: TextStyle(fontSize: 20),
                   ),
                 );
               }

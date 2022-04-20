@@ -27,11 +27,13 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedTab = context.select((HomeCubit cubit) => cubit.state.tab);
+    final currentState = context.select((HomeCubit cubit) => cubit.state);
+    final selectedTab = currentState.tab;
+    final appBarTitle = currentState.toString();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tourism Todo Recommender'),
+        title: Text(appBarTitle),
         actions: <Widget>[
           IconButton(
             key: const Key('homePage_logout_iconButton'),
