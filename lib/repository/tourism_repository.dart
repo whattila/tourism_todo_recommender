@@ -6,8 +6,8 @@ import '../data/todo.dart';
 import '../data/user.dart';
 
 /// {@template todos_repository}
-/// A repository that handles requests related to our touristic todos app:
-/// data acquisition and user handling.
+/// A repository that transmits services of the DL to the BL, while also masking the former:
+/// data acquisition, user handling, geocoding and anything we add later.
 /// {@endtemplate}
 class TourismRepository {
   /// {@macro todos_repository}
@@ -33,8 +33,6 @@ class TourismRepository {
   Stream<List<Todo>> getSavedTodos(String userId) => _dataClient.getSavedTodos(userId);
 
   /// Uploads a [Todo] to the central database.
-  ///
-  /// If a [todo] with the same id already exists, it will be replaced.
   Future<void> uploadTodo(Todo todo) => _dataClient.uploadTodo(todo);
 
   // TODO: ennél a kettőnél lehet hogy Future<int> kellene a mentett/törölt elemek számával?

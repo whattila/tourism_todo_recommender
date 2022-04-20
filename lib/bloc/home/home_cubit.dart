@@ -8,6 +8,6 @@ import 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(const HomeState());
 
-  /// Emits the state with the selected tab so the widget tree can rebuild itself.
+  /// Emits the state with the selected tab so the widget tree can rebuild itself showing that.
   void setTab(HomeTab tab) => emit(HomeState(tab: tab));
 }

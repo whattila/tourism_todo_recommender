@@ -16,7 +16,6 @@ class SearchStateLoading extends SearchState {}
 class SearchStateSuccess extends SearchState {
   const SearchStateSuccess(this.items);
 
-  // ez itt biztos Todo lesz?
   final List<Todo> items;
 
   @override

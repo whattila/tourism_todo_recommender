@@ -18,8 +18,6 @@ abstract class DataClient {
   Stream<List<Todo>> getSavedTodos(String userId);
 
   /// Uploads a [Todo] to the central database.
-  ///
-  /// If a [todo] with the same id already exists, it will be replaced.
   Future<void> uploadTodo(Todo todo);
 
   // TODO: ennél a kettőnél lehet hogy Future<int> kellene a mentett/törölt elemek számával?

@@ -62,7 +62,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       ) async {
     // TODO: nem engedhetjük, hogy üres sztringeket adjon meg a felhasználó
     // TODO: szerverről jövő hibák kezelése
-    // TODO: create displayName properly and use that
     emit(state.copyWith(status: UploadStatus.loading));
     Geolocation? location = await _tourismRepository.getLocationFromAddress(state.address);
     final todo = (state.initialTodo ?? const Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: '', uploaderName: '', uploaderId: ''))
