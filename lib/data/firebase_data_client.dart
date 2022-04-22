@@ -34,11 +34,12 @@ class FirebaseDataClient extends DataClient {
     final _querySnapshot = await _firebaseFirestore.collection('todos').get();
     _querySnapshot.docs.forEach((doc) {
       final todo = Todo.fromJson(doc.data());
-      if (todo.address.toLowerCase().contains(searchTerm) ||
-          todo.shortDescription.toLowerCase().contains(searchTerm) ||
-          todo.uploaderName.toLowerCase().contains(searchTerm) ||
-          todo.detailedDescription.toLowerCase().contains(searchTerm) ||
-          todo.nature.toLowerCase().contains(searchTerm)
+      final lowerCaseSearchTerm = searchTerm.toLowerCase();
+      if (todo.address.toLowerCase().contains(lowerCaseSearchTerm) ||
+          todo.shortDescription.toLowerCase().contains(lowerCaseSearchTerm) ||
+          todo.uploaderName.toLowerCase().contains(lowerCaseSearchTerm) ||
+          todo.detailedDescription.toLowerCase().contains(lowerCaseSearchTerm) ||
+          todo.nature.toLowerCase().contains(lowerCaseSearchTerm)
       ) {
         _matchingTodos.add(todo);
       }
