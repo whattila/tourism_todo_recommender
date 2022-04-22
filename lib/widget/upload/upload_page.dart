@@ -30,10 +30,11 @@ class UploadPage extends StatelessWidget {
       previous.status != current.status &&
           current.status == UploadStatus.success,
       listener: (context, state) {
+        final snackBarText = state.isNewTodo ? 'Todo uploaded successfully' : 'Todo updated successfully';
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            const SnackBar(content: Text('Todo uploaded successfully')),
+            SnackBar(content: Text(snackBarText)),
           );
         Navigator.of(context).pop();
       },
