@@ -35,7 +35,6 @@ class AppView extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      // TODO: darkTheme, localization?
       home: FlowBuilder<AuthenticationStatus>(
         state: context.select((AuthenticationBloc bloc) => bloc.state.status),
         onGeneratePages: onGenerateAppViewPages,

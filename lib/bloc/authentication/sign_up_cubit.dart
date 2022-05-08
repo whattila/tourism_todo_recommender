@@ -3,9 +3,9 @@ import 'package:formz/formz.dart';
 import 'package:tourism_todo_recommender/bloc/authentication/sign_up_state.dart';
 import '../../data/authenticator.dart';
 import '../../repository/tourism_repository.dart';
-import '../../widget/authentication/confirmed_password.dart';
-import '../../widget/authentication/email.dart';
-import '../../widget/authentication/password.dart';
+import 'confirmed_password.dart';
+import '../../bloc/authentication/email.dart';
+import 'password.dart';
 
 
 class SignUpCubit extends Cubit<SignUpState> {

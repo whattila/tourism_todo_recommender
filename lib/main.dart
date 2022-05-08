@@ -9,7 +9,7 @@ import 'data/firebase_data_client.dart';
 import 'data/geocoder.dart';
 import 'firebase_options.dart';
 
-// Ez a sok cucc csak a tesztelési időszakra kell?
+// Ez a sok cucc csak a tesztelési időszakra kell? Igen
 Future<void> main() {
   return BlocOverrides.runZoned(
         () async {
