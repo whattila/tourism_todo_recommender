@@ -5,10 +5,6 @@ import 'package:equatable/equatable.dart';
 /// [Todo]s are immutable and can be copied using [copyWith]
 /// {@endtemplate}
 class Todo extends Equatable {
-  // All arguments must be a non-empty string to maintain domain integrity
-  // and therefore must be initialized
-  // the only exception is when we create and upload an object:
-  // id will be an empty string, but it will receive its value from Cloud Firestore shortly
   /// {@macro user}
   const Todo({
     required this.id,
