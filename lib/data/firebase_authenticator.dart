@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:tourism_todo_recommender/data/authenticator.dart';
-import 'package:tourism_todo_recommender/data/user.dart';
+import '../../models/user.dart';
 
 /// {@template firebase_authenticator}
 /// Implementation of [Authenticator] which uses Firebase.

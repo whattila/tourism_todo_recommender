@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 
 abstract class SearchEvent extends Equatable {
   const SearchEvent();
@@ -24,4 +25,13 @@ class SearchFieldCleared extends SearchEvent {
 
   @override
   List<Object> get props => [];
+}
+
+class DetailedSearchLaunched extends SearchEvent {
+  const DetailedSearchLaunched({required this.searchData});
+
+  final DetailedSearchData searchData;
+
+  @override
+  List<Object> get props => [searchData];
 }

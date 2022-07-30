@@ -1,4 +1,4 @@
-import 'package:tourism_todo_recommender/data/user.dart';
+import '../../models/user.dart';
 
 /// {@template sign_up_with_email_and_password_failure}
 /// Thrown if during the sign up process if a failure occurs.

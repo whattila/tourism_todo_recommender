@@ -1,20 +1,5 @@
-import 'package:equatable/equatable.dart';
 import 'package:geocoding/geocoding.dart';
-
-/// Represents a geographical location by storing its latitude and longitude.
-/// Masks the library behind geocoding, to detach the business layer from it.
-/// Extends Equatable as a best practice.
-class Geolocation extends Equatable {
-  const Geolocation({required this.latitude, required this.longitude});
-
-  final double latitude;
-  final double longitude;
-
-  @override
-  List<Object?> get props => [latitude, longitude];
-
-  // we could even add a copyWith here
-}
+import '../models/geolocation.dart';
 
 /// Handles requests to the geocoding libary.
 /// Detaches the upper layers from the used library.

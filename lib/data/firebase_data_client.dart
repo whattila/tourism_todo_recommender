@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tourism_todo_recommender/data/data_client.dart';
-import 'package:tourism_todo_recommender/data/todo.dart';
+import 'package:tourism_todo_recommender/models/todo.dart';
 
 class FirebaseDataClient extends DataClient {
   FirebaseDataClient({FirebaseFirestore? firebaseFirestore})

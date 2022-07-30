@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import '../../data/todo.dart';
+import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
 import 'own_todos_event.dart';
 import 'own_todos_state.dart';

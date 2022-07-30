@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_event.dart';
 import '../../bloc/upload/upload_bloc.dart';
 import '../../bloc/upload/upload_state.dart';
-import '../../data/todo.dart';
+import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
 
 class UploadPage extends StatelessWidget {

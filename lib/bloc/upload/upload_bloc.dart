@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_event.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_state.dart';
-import '../../data/geocoder.dart';
-import '../../data/todo.dart';
+import '../../models/geolocation.dart';
+import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
 
 class UploadBloc extends Bloc<UploadEvent, UploadState> {

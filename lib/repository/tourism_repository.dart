@@ -1,9 +1,9 @@
 import 'package:tourism_todo_recommender/data/data_client.dart';
-
 import '../data/authenticator.dart';
 import '../data/geocoder.dart';
-import '../data/todo.dart';
-import '../data/user.dart';
+import '../models/geolocation.dart';
+import '../models/todo.dart';
+import '../../models/user.dart';
 
 /// {@template todos_repository}
 /// A repository that transmits services of the DL to the BL, while also masking the former:

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../data/todo.dart';
+import '../../models/todo.dart';
 
 const LatLng DEFAULT_LOCATION = LatLng(42.7477863,-71.1699932);
 const double PIN_VISIBLE_POSITION = 70;

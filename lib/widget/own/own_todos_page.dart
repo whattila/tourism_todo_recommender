@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/own/own_todos_bloc.dart';
 import '../../bloc/own/own_todos_event.dart';
 import '../../bloc/own/own_todos_state.dart';
-import '../../data/todo.dart';
+import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
 import '../upload/upload_page.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/search/search_bloc.dart';
 import '../../bloc/search/search_event.dart';
 import '../../bloc/search/search_state.dart';
-import '../../data/todo.dart';
+import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
 import '../detail/detail_page.dart';
 import '../map/map_page.dart';
@@ -100,24 +100,24 @@ class _SearchBody extends StatelessWidget {
         if (state is SearchStateSuccess) {
           return state.items.isEmpty
               ? const Expanded( // add this
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'No results',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 20),
-                    )
-                  ),
+            child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'No results',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20),
                 )
+            ),
+          )
               : Expanded(child: _SearchResults(items: state.items));
         }
         return const Expanded( // add this
           child: Align(
               alignment: Alignment.center,
               child: Text(
-                  'Here you can search for touristic todos uploaded by others and you',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 30),
+                'Here you can search for touristic todos uploaded by others and you',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 30),
               )
           ),
         );
@@ -134,12 +134,12 @@ class _SearchResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: items.length,
-      itemBuilder: (BuildContext context, int index) {
-        return _SearchResultItem(item: items[index]);
-      },
-      separatorBuilder: (context, i) => const Divider()
+        padding: const EdgeInsets.all(16.0),
+        itemCount: items.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _SearchResultItem(item: items[index]);
+        },
+        separatorBuilder: (context, i) => const Divider()
     );
   }
 }
@@ -157,11 +157,11 @@ class _SearchResultItem extends StatelessWidget {
       subtitle: Text(item.address),
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            fullscreenDialog: true,
-            builder: (context) => DetailPage(todo: item)
-          )
+            context,
+            MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (context) => DetailPage(todo: item)
+            )
         );
       },
       trailing: TextButton(

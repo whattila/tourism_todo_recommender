@@ -1,14 +1,17 @@
 import 'package:bloc/bloc.dart';
+import 'package:tourism_todo_recommender/bloc/search/detailed_search/detailed_search_cubit.dart';
 import 'package:tourism_todo_recommender/bloc/search/search_event.dart';
 import 'package:tourism_todo_recommender/bloc/search/search_state.dart';
+import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import '../../repository/tourism_repository.dart';
 
-class SearchBloc extends Bloc<SearchEvent, SearchState> {
+class SearchBloc extends Bloc<SearchEvent, SearchState> implements DetailedSearchRequestListener {
   SearchBloc({required TourismRepository tourismRepository,})
       : _tourismRepository = tourismRepository,
         super(SearchStateEmpty()) {
     on<SearchLaunched>(_onSearchLaunched);
     on<SearchFieldCleared>(_onSearchFieldCleared);
+    on<DetailedSearchLaunched>(_onDetailedSearchLaunched);
   }
 
   final TourismRepository _tourismRepository;
@@ -27,10 +30,23 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final searchTerm = event.text;
     emit(SearchStateLoading());
     try {
-       final results = await _tourismRepository.searchTodos(searchTerm);
-       emit(SearchStateSuccess(results));
+      final results = await _tourismRepository.searchTodos(searchTerm);
+      emit(SearchStateSuccess(results));
     } catch (error) {
-       emit(const SearchStateError('Something went wrong'));
+      emit(const SearchStateError('Something went wrong'));
     }
+  }
+
+  void _onDetailedSearchLaunched(
+      DetailedSearchLaunched event,
+      Emitter<SearchState> emit,
+      ) async {
+    // TODO: implement _onDetailedSearchLaunched
+    throw UnimplementedError();
+  }
+
+  @override
+  void launchDetailedSearch(DetailedSearchData searchData) {
+    add(DetailedSearchLaunched(searchData: searchData));
   }
 }

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../data/todo.dart';
+import '../../models/todo.dart';
 
 enum UploadStatus { initial, loading, success, failure }
 

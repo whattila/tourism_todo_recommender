@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../data/todo.dart';
+import '../../models/todo.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({Key? key, required this.todo}) : super(key: key);

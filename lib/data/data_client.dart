@@ -1,4 +1,4 @@
-import 'package:tourism_todo_recommender/data/todo.dart';
+import 'package:tourism_todo_recommender/models/todo.dart';
 
 /// {@template data_client}
 /// The interface for an API that provides access to the data a logged-in user works with (e.g. uploaded todos).
