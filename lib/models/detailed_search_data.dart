@@ -1,7 +1,21 @@
-class DetailedSearchData {
-  // TODO: hogy legyenek a szöveges paraméterek kulcs-érték párjai tárolva?
-  const DetailedSearchData({required this.nearbyOnly});
+import 'geolocation.dart';
 
-  // TODO: ide biztos ez kell és nem maga a hely egy Geolocation objektumban?
-  final bool nearbyOnly;
+class DetailedSearchData {
+
+  const DetailedSearchData({
+    required this.uploaderSearchTerm,
+    required this.shortDescriptionSearchTerm,
+    required this.natureSearchTerm,
+    required this.addressSearchTerm,
+    required this.detailedDescriptionSearchTerm,
+    required this.userLocation
+  });
+
+  final String uploaderSearchTerm;
+  final String shortDescriptionSearchTerm;
+  final String natureSearchTerm;
+  final String addressSearchTerm;
+  final String detailedDescriptionSearchTerm;
+
+  final Geolocation userLocation;
 }

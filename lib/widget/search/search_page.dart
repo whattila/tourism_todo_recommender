@@ -7,6 +7,7 @@ import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
 import '../detail/detail_page.dart';
 import '../map/map_page.dart';
+import 'detailed_search/detailed_search_page.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SearchBloc(tourismRepository: context.read<TourismRepository>()),
+      create: (context) => SearchBloc(context.read<TourismRepository>()),
       child: Column(
         children: <Widget>[
           _Searcher(),
@@ -64,18 +65,27 @@ class _SearcherState extends State<_Searcher> {
             ),
           ),
           const SizedBox(height: 4),
-          ElevatedButton.icon(
-            onPressed: () {
-              final value = _textController.value.text;
-              _searchBloc.add(SearchLaunched(text: value));
-            },
-            icon: const Icon(Icons.search),
-            label: const Text("SEARCH"),
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            ),
-          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {
+                  final value = _textController.value.text;
+                  _searchBloc.add(SearchLaunched(text: value));
+                },
+                icon: const Icon(Icons.search),
+                label: const Text("SEARCH"),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).push(DetailedSearchPage.route(listener: _searchBloc)),
+                child: const Text('DETAILED SEARCH'),
+              )
+            ]
+          )
         ]
     );
   }

@@ -50,9 +50,9 @@ class HomeView extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         key: const Key('homeView_uploadTodo_floatingActionButton'),
         onPressed: () => Navigator.of(context).push(UploadPage.route()),
-        child: const Icon(Icons.upload),
         backgroundColor: Colors.deepOrange,
         foregroundColor: Colors.white,
+        child: const Icon(Icons.upload),
       ),
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),

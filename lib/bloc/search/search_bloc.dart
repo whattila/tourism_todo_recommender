@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:tourism_todo_recommender/bloc/search/detailed_search/detailed_search_cubit.dart';
 import 'package:tourism_todo_recommender/bloc/search/search_event.dart';
@@ -6,9 +7,7 @@ import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import '../../repository/tourism_repository.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> implements DetailedSearchRequestListener {
-  SearchBloc({required TourismRepository tourismRepository,})
-      : _tourismRepository = tourismRepository,
-        super(SearchStateEmpty()) {
+  SearchBloc(this._tourismRepository) : super(SearchStateEmpty()) {
     on<SearchLaunched>(_onSearchLaunched);
     on<SearchFieldCleared>(_onSearchFieldCleared);
     on<DetailedSearchLaunched>(_onDetailedSearchLaunched);
@@ -41,8 +40,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> implements DetailedSearc
       DetailedSearchLaunched event,
       Emitter<SearchState> emit,
       ) async {
-    // TODO: implement _onDetailedSearchLaunched
-    throw UnimplementedError();
+    // TODO: switch to SearchStateLoading when actually implementing
+    emit(SearchStateEmpty());
   }
 
   @override
