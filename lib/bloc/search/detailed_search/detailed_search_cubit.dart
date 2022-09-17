@@ -22,7 +22,6 @@ class DetailedSearchCubit extends Cubit<DetailedSearchState> {
   }) async {
 
     Geolocation? userLocation;
-
     if (state.isNearbyOnlyChecked) {
       try {
         userLocation = await _listener.getDeviceLocation();
@@ -44,8 +43,8 @@ class DetailedSearchCubit extends Cubit<DetailedSearchState> {
         userLocation: userLocation
     );
 
-    _listener.launchDetailedSearch(searchData);
     emit(state.copyWith(isSubmitted: true));
+    _listener.launchDetailedSearch(searchData);
   }
 }
 
