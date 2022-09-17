@@ -1,8 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hu.bme.iit.tourism_todo_recommender">
-
-
-
    <application
         android:label="tourism_todo_recommender"
         android:name="${applicationName}"

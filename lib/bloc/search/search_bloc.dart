@@ -4,6 +4,7 @@ import 'package:tourism_todo_recommender/bloc/search/detailed_search/detailed_se
 import 'package:tourism_todo_recommender/bloc/search/search_event.dart';
 import 'package:tourism_todo_recommender/bloc/search/search_state.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
+import 'package:tourism_todo_recommender/models/geolocation.dart';
 import '../../repository/tourism_repository.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> implements DetailedSearchRequestListener {
@@ -22,7 +23,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> implements DetailedSearc
     emit(SearchStateEmpty());
   }
 
-  void _onSearchLaunched(
+  Future<void> _onSearchLaunched(
       SearchLaunched event,
       Emitter<SearchState> emit,
       ) async {
@@ -36,16 +37,27 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> implements DetailedSearc
     }
   }
 
-  void _onDetailedSearchLaunched(
+  Future<void> _onDetailedSearchLaunched(
       DetailedSearchLaunched event,
       Emitter<SearchState> emit,
       ) async {
-    // TODO: switch to SearchStateLoading when actually implementing
-    emit(SearchStateEmpty());
+    emit(SearchStateLoading());
+    try {
+      final results = await _tourismRepository.searchTodosInDetail(event.searchData);
+      emit(SearchStateSuccess(results));
+    } catch (error) {
+      emit(const SearchStateError('Something went wrong'));
+    }
   }
 
   @override
   void launchDetailedSearch(DetailedSearchData searchData) {
     add(DetailedSearchLaunched(searchData: searchData));
+  }
+
+  @override
+  Future<Geolocation> getDeviceLocation() async {
+    final deviceLocation = await _tourismRepository.getDeviceLocation();
+    return deviceLocation;
   }
 }

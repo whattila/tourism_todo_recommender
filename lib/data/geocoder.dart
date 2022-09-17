@@ -1,6 +1,14 @@
 import 'package:geocoding/geocoding.dart';
 import '../models/geolocation.dart';
 
+class InvalidLocation implements Exception {
+  const InvalidLocation([
+    this.message = "An unknown exception occurred",
+  ]);
+
+  final String message;
+}
+
 /// Handles requests to the geocoding libary.
 /// Detaches the upper layers from the used library.
 class Geocoder {

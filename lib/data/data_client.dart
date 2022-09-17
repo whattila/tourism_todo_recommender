@@ -1,5 +1,7 @@
 import 'package:tourism_todo_recommender/models/todo.dart';
 
+import '../models/detailed_search_data.dart';
+
 /// {@template data_client}
 /// The interface for an API that provides access to the data a logged-in user works with (e.g. uploaded todos).
 /// It is abstract so it can be mocked for testing.
@@ -13,6 +15,9 @@ abstract class DataClient {
 
   /// Fetches a [List] of Todos fitting for a search term.
   Future<List<Todo>> searchTodos(String searchTerm);
+
+  /// Fetches a [List] of Todos fitting for the list of conditions specified in a DetailedSearchData object
+  Future<List<Todo>> searchTodosInDetail(DetailedSearchData searchData);
 
   /// Provides the [Stream] of todos the user saved.
   Stream<List<Todo>> getSavedTodos(String userId);

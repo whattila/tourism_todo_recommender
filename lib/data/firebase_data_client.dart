@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tourism_todo_recommender/data/data_client.dart';
+import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import 'package:tourism_todo_recommender/models/todo.dart';
 
 class FirebaseDataClient extends DataClient {
@@ -30,9 +31,9 @@ class FirebaseDataClient extends DataClient {
   Future<List<Todo>> searchTodos(String searchTerm) async {
     // this is fine when we have relatively few documents
     // if we had many, we would implement a full-text search solution with a third-party service like Algolia or Elastic
-    List<Todo> _matchingTodos = [];
-    final _querySnapshot = await _firebaseFirestore.collection('todos').get();
-    _querySnapshot.docs.forEach((doc) {
+    List<Todo> matchingTodos = [];
+    final querySnapshot = await _firebaseFirestore.collection('todos').get();
+    querySnapshot.docs.forEach((doc) {
       final todo = Todo.fromJson(doc.data());
       final lowerCaseSearchTerm = searchTerm.toLowerCase();
       if (todo.address.toLowerCase().contains(lowerCaseSearchTerm) ||
@@ -41,10 +42,23 @@ class FirebaseDataClient extends DataClient {
           todo.detailedDescription.toLowerCase().contains(lowerCaseSearchTerm) ||
           todo.nature.toLowerCase().contains(lowerCaseSearchTerm)
       ) {
-        _matchingTodos.add(todo);
+        matchingTodos.add(todo);
       }
     });
-    return _matchingTodos;
+    return matchingTodos;
+  }
+
+  @override
+  Future<List<Todo>> searchTodosInDetail(DetailedSearchData searchData) async {
+    List<Todo> matchingTodos = [];
+    final querySnapshot = await _firebaseFirestore.collection('todos').get();
+    querySnapshot.docs.forEach((doc) {
+      final todo = Todo.fromJson(doc.data());
+      if (searchData.isTodoMatching(todo) == true) {
+        matchingTodos.add(todo);
+      }
+    });
+    return matchingTodos;
   }
 
   @override
@@ -71,5 +85,4 @@ class FirebaseDataClient extends DataClient {
         ).toList()
     );
   }
-  
 }
