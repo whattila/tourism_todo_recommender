@@ -20,15 +20,30 @@ class DetailedSearchData {
   final String detailedDescriptionSearchTerm;
   final Geolocation? userLocation;
 
-  // TODO: I could add a property here which returns if the location is valid or not
+  // TODO: The user could be able to set this.
+  static const _maxDistanceOfCloseTodosInKM = 10;
 
   /// Returns true if the given todo matches the conditions specified in this object
   /// otherwise returns false
   bool isTodoMatching(Todo todo) {
-      return todo.uploaderName.toLowerCase().contains(uploaderSearchTerm.toLowerCase())
-          && todo.shortDescription.toLowerCase().contains(shortDescriptionSearchTerm.toLowerCase())
-          && todo.nature.toLowerCase().contains(natureSearchTerm.toLowerCase())
-          && todo.address.toLowerCase().contains(addressSearchTerm.toLowerCase())
-          && todo.detailedDescription.toLowerCase().contains(detailedDescriptionSearchTerm.toLowerCase());
+    return _areSearchTermsFound(todo) && _isTodoCloseToCurrentLocation(todo);
+  }
+
+  bool _areSearchTermsFound (Todo todo) {
+    return todo.uploaderName.toLowerCase().contains(uploaderSearchTerm.toLowerCase())
+        && todo.shortDescription.toLowerCase().contains(shortDescriptionSearchTerm.toLowerCase())
+        && todo.nature.toLowerCase().contains(natureSearchTerm.toLowerCase())
+        && todo.address.toLowerCase().contains(addressSearchTerm.toLowerCase())
+        && todo.detailedDescription.toLowerCase().contains(detailedDescriptionSearchTerm.toLowerCase());
+  }
+
+  bool _isTodoCloseToCurrentLocation(Todo todo) {
+    if (userLocation != null) {
+      if (todo.latitude != null && todo.longitude != null) {
+        return userLocation!.distanceTo(Geolocation(latitude: todo.latitude!, longitude: todo.longitude!)) <= _maxDistanceOfCloseTodosInKM;
+      }
+      return false;
+    }
+    return true;
   }
 }

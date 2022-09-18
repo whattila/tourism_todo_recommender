@@ -34,6 +34,8 @@ class DetailedSearchCubit extends Cubit<DetailedSearchState> {
       }
     }
 
+    // TODO: I could add a waiting animation while getting the location.
+
     final DetailedSearchData searchData = DetailedSearchData(
         uploaderSearchTerm: uploaderSearchTerm,
         shortDescriptionSearchTerm: shortDescriptionSearchTerm,
