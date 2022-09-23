@@ -43,10 +43,11 @@ class DetailedSearchView extends StatelessWidget {
           child: Column(
             children: [
               const Text(
-                'To search for texts in particular search areas, type the texts in the corresponding text fields. Use the other fields to set more filters.',
+                'To search in particular search areas, type filters in the corresponding text fields. Type in more fields and use the other options to set more filters.',
                 textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: 17),
               ),
+              const SizedBox(height: 16),
               _SearchForm(),
             ],
           ),
@@ -80,6 +81,7 @@ class _SearchFormState extends State<_SearchForm> {
             border: OutlineInputBorder()
           ),
         ),
+        const SizedBox(height: 8),
         TextFormField(
           controller: shortDescriptionController,
           decoration: const InputDecoration(
@@ -87,6 +89,7 @@ class _SearchFormState extends State<_SearchForm> {
             border: OutlineInputBorder()
           ),
         ),
+        const SizedBox(height: 8),
         TextFormField(
           controller: addressController,
           decoration: const InputDecoration(
@@ -94,6 +97,7 @@ class _SearchFormState extends State<_SearchForm> {
             border: OutlineInputBorder()
           ),
         ),
+        const SizedBox(height: 8),
         TextFormField(
           controller: natureController,
           decoration: const InputDecoration(
@@ -101,6 +105,7 @@ class _SearchFormState extends State<_SearchForm> {
             border: OutlineInputBorder()
           ),
         ),
+        const SizedBox(height: 8),
         TextFormField(
           controller: detailedDescriptionController,
           decoration: const InputDecoration(
@@ -108,6 +113,7 @@ class _SearchFormState extends State<_SearchForm> {
             border: OutlineInputBorder()
           ),
         ),
+        const SizedBox(height: 8),
         const CheckboxRow(),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -162,7 +168,9 @@ class CheckboxRow extends StatelessWidget {
             }
           },
         ),
-        const Text("Only nearby todos")
+        const Text("Only nearby todos",
+          style: TextStyle(fontSize: 20),
+        )
       ],
     );
   }

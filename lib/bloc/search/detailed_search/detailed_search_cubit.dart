@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:tourism_todo_recommender/data/device_services.dart';
+import 'package:tourism_todo_recommender/data/geocoder.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import 'package:tourism_todo_recommender/models/geolocation.dart';
 import 'detailed_search_state.dart';
@@ -26,6 +27,9 @@ class DetailedSearchCubit extends Cubit<DetailedSearchState> {
       try {
         userLocation = await _listener.getDeviceLocation();
       } on DeviceException catch (e) {
+        // if an exception occurs, we leave the location null
+        // later we can also do additional stuff here if we wish
+      } on InvalidLocation catch (e) {
         // if an exception occurs, we leave the location null
         // later we can also do additional stuff here if we wish
       } catch (_) {

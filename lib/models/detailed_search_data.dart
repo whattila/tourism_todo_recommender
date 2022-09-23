@@ -38,7 +38,9 @@ class DetailedSearchData {
   }
 
   bool _isTodoCloseToCurrentLocation(Todo todo) {
+    // if userLocation is null, we accept all todos regardless location
     if (userLocation != null) {
+      // if a todo's location is null, we can't check where it is and regard it as not close
       if (todo.latitude != null && todo.longitude != null) {
         return userLocation!.distanceTo(Geolocation(latitude: todo.latitude!, longitude: todo.longitude!)) <= _maxDistanceOfCloseTodosInKM;
       }

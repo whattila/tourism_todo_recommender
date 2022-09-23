@@ -11,7 +11,6 @@ class Geolocation extends Equatable {
   final double longitude;
 
   /// Uses the Haversine formula to compute the distance between this location and another.
-  /// TODO: I should check if this is truly correct.
   double distanceTo(Geolocation destination) {
     const earthRadiusKm = 6372.8;
 
