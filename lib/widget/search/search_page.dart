@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/favorites/favorites_bloc.dart';
+import '../../bloc/favorites/favorites_event.dart';
+import '../../bloc/favorites/favorites_state.dart';
 import '../../bloc/search/search_bloc.dart';
 import '../../bloc/search/search_event.dart';
 import '../../bloc/search/search_state.dart';
@@ -174,23 +177,44 @@ class _SearchResultItem extends StatelessWidget {
             )
         );
       },
-      trailing: TextButton(
-        onPressed: () {
-          if (item.latitude != null && item.longitude != null) {
-            Navigator.of(context).push<void>(MaterialPageRoute(
-                builder: (context) => MapPage(todo: item)
-            ));
-          }
-          else {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(content: Text('This todo does not have valid coordinates')),
-              );
-          }
-          //Navigator.of(context).push<void>(SignUpPage.route());
-        },
-        child: const Text('SHOW ON MAP'),
+      trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            BlocBuilder<FavoritesBloc, FavoritesState>(
+                buildWhen: (previousState, state) =>
+                    previousState.isTodoFavorite(item) != state.isTodoFavorite(item),
+                builder: (context, state) {
+                  final isFavorite = state.isTodoFavorite(item);
+                  return IconButton(
+                    icon: isFavorite ? const Icon(Icons.star) : const Icon(Icons.star_border),
+                    tooltip: isFavorite ? 'Delete from favorites' : 'Save to favorites',
+                    onPressed: () => context.read<FavoritesBloc>().add(
+                        isFavorite ?
+                        TodosDeletedFromFavorites(todos: [item]) :
+                        TodosSavedToFavorites(todos: [item])
+                    ),
+                  );
+                }
+            ),
+            IconButton(
+              icon: const Icon(Icons.map),
+              tooltip: 'Show on map',
+              onPressed: () {
+                if (item.latitude != null && item.longitude != null) {
+                  Navigator.of(context).push<void>(MaterialPageRoute(
+                      builder: (context) => MapPage(todo: item)
+                  ));
+                }
+                else {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(content: Text('This todo does not have valid coordinates')),
+                    );
+                }
+              },
+            ),
+          ]
       ),
     );
   }

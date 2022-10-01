@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tourism_todo_recommender/widget/favorites/favorites_page.dart';
 import 'package:tourism_todo_recommender/widget/upload/upload_page.dart';
 import '../../bloc/authentication/authentication_bloc.dart';
 import '../../bloc/authentication/authentication_event.dart';
@@ -10,8 +11,6 @@ import '../search/search_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
-
-  static Page page() => const MaterialPage<void>(child: HomePage());
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +43,9 @@ class HomeView extends StatelessWidget {
       ),
       body: IndexedStack(
         index: selectedTab.index,
-        children: const [SearchPage(), OwnTodosPage()],
+        children: const [SearchPage(), OwnTodosPage(), FavoritesPage()],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         key: const Key('homeView_uploadTodo_floatingActionButton'),
         onPressed: () => Navigator.of(context).push(UploadPage.route()),
@@ -62,7 +61,12 @@ class HomeView extends StatelessWidget {
             _HomeTabButton(
               groupValue: selectedTab,
               value: HomeTab.search,
-              icon: const Icon(Icons.explore),
+              icon: const Icon(Icons.search),
+            ),
+            _HomeTabButton(
+              groupValue: selectedTab,
+              value: HomeTab.favorites,
+              icon: const Icon(Icons.star),
             ),
             _HomeTabButton(
               groupValue: selectedTab,

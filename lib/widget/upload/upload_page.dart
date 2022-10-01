@@ -192,7 +192,7 @@ class _LongDescriptionField extends StatelessWidget {
     // Only the first 1,500 bytes of the UTF-8 representation are considered by queries by Cloud Firestore.
     // 1 char in UTF-8 is 1 to 4 bytes.
     // Actually now it does not matter as we search in the client app
-    // but if we switch to e.g. Algolia, it will
+    // but if we switch to e.g. Algolia, it may matter
     const maximumCharacters = 375;
 
     return TextFormField(

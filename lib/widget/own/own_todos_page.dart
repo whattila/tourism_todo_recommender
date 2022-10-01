@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tourism_todo_recommender/bloc/favorites/favorites_bloc.dart';
+import 'package:tourism_todo_recommender/bloc/favorites/favorites_state.dart';
+import '../../bloc/favorites/favorites_event.dart';
 import '../../bloc/own/own_todos_bloc.dart';
 import '../../bloc/own/own_todos_event.dart';
 import '../../bloc/own/own_todos_state.dart';
@@ -36,7 +39,7 @@ class OwnTodosView extends StatelessWidget {
               ..hideCurrentSnackBar()
               ..showSnackBar(
                 const SnackBar(
-                  content: Text('An error occured while loading your uploaded todos'),
+                  content: Text('An error occurred while loading your uploaded todos'),
                 ),
               );
           }
@@ -84,6 +87,22 @@ class _TodoListTile extends StatelessWidget {
       title: Text(item.shortDescription),
       subtitle: Text(item.address),
       onTap: () => Navigator.of(context).push(UploadPage.route(initialTodo: item)),
+      trailing: BlocBuilder<FavoritesBloc, FavoritesState>(
+          buildWhen: (previousState, state) =>
+            previousState.isTodoFavorite(item) != state.isTodoFavorite(item),
+          builder: (context, state) {
+            final isFavorite = state.isTodoFavorite(item);
+            return IconButton(
+              icon: isFavorite ? const Icon(Icons.star) : const Icon(Icons.star_border),
+              tooltip: isFavorite ? 'Delete from favorites' : 'Save to favorites',
+              onPressed: () => context.read<FavoritesBloc>().add(
+                  isFavorite ?
+                  TodosDeletedFromFavorites(todos: [item]) :
+                  TodosSavedToFavorites(todos: [item])
+              ),
+            );
+          }
+      ),
     );
   }
 }

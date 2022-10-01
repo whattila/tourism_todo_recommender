@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 /// These values represent the tabs available on the ButtomAppBar
-enum HomeTab { search, own }
+enum HomeTab { search, own, favorites }
 
 /// {@template home_state}
 /// It keeps record of which tab is selected on the ButtomAppBar
@@ -26,6 +26,8 @@ class HomeState extends Equatable {
         return 'Search for todos';
       case HomeTab.own:
         return 'Your uploaded todos';
+      case HomeTab.favorites:
+        return 'Your favorite todos';
     }
   }
 }

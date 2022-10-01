@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:stream_transform/stream_transform.dart';
 import 'package:tourism_todo_recommender/data/data_client.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import 'package:tourism_todo_recommender/models/todo.dart';
@@ -10,21 +11,39 @@ class FirebaseDataClient extends DataClient {
   final FirebaseFirestore _firebaseFirestore;
 
   @override
-  Future<void> deleteTodosFromFavorites(List<String> ids) {
-    // TODO: implement deleteTodosFromFavorites
-    throw UnimplementedError();
+  Future<void> deleteTodosFromFavorites(List<String> ids, String userId) async {
+    for (var id in ids) {
+      await _firebaseFirestore.collection(userId).doc(id).delete();
+    }
   }
 
   @override
-  Stream<List<Todo>> getSavedTodos(String userId) {
-    // TODO: implement getSavedTodos
-    throw UnimplementedError();
+  Stream<List<Todo>> getFavoriteTodos(String userId) {
+    Stream<QuerySnapshot> favoriteIdsStream = _firebaseFirestore.collection(userId).snapshots();
+    return favoriteIdsStream.switchMap(
+            (qShot) {
+              final favoriteIds = [];
+              for (var doc in qShot.docs) {
+                favoriteIds.add(doc.id);
+              }
+              final favoriteTodosStream = _firebaseFirestore
+                  .collection('todos')
+                  .where('id', whereIn: favoriteIds)
+                  .snapshots();
+              return favoriteTodosStream.map(
+                      (qShot) => qShot.docs.map(
+                          (doc) => Todo.fromJson(doc.data())
+                  ).toList()
+              );
+            }
+    );
   }
 
   @override
-  Future<void> saveTodosToFavorites(List<String> ids) {
-    // TODO: implement saveTodosToFavorites
-    throw UnimplementedError();
+  Future<void> saveTodosToFavorites(List<String> ids, String userId) async {
+    for (var id in ids) {
+      await _firebaseFirestore.collection(userId).doc(id).set({});
+    }
   }
 
   @override
@@ -33,7 +52,7 @@ class FirebaseDataClient extends DataClient {
     // if we had many, we would implement a full-text search solution with a third-party service like Algolia or Elastic
     List<Todo> matchingTodos = [];
     final querySnapshot = await _firebaseFirestore.collection('todos').get();
-    querySnapshot.docs.forEach((doc) {
+    for (var doc in querySnapshot.docs) {
       final todo = Todo.fromJson(doc.data());
       final lowerCaseSearchTerm = searchTerm.toLowerCase();
       if (todo.address.toLowerCase().contains(lowerCaseSearchTerm) ||
@@ -44,7 +63,7 @@ class FirebaseDataClient extends DataClient {
       ) {
         matchingTodos.add(todo);
       }
-    });
+    }
     return matchingTodos;
   }
 
@@ -52,12 +71,12 @@ class FirebaseDataClient extends DataClient {
   Future<List<Todo>> searchTodosInDetail(DetailedSearchData searchData) async {
     List<Todo> matchingTodos = [];
     final querySnapshot = await _firebaseFirestore.collection('todos').get();
-    querySnapshot.docs.forEach((doc) {
+    for (var doc in querySnapshot.docs) {
       final todo = Todo.fromJson(doc.data());
       if (searchData.isTodoMatching(todo) == true) {
         matchingTodos.add(todo);
       }
-    });
+    }
     return matchingTodos;
   }
 

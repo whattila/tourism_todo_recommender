@@ -20,7 +20,7 @@ abstract class DataClient {
   Future<List<Todo>> searchTodosInDetail(DetailedSearchData searchData);
 
   /// Provides the [Stream] of todos the user saved.
-  Stream<List<Todo>> getSavedTodos(String userId);
+  Stream<List<Todo>> getFavoriteTodos(String userId);
 
   /// Uploads a [Todo] to the central database.
   Future<void> uploadTodo(Todo todo);
@@ -31,13 +31,13 @@ abstract class DataClient {
   ///
   /// If no todo exists with one of the ids, a [TodoNotFoundException] error is
   /// thrown.
-  Future<void> saveTodosToFavorites(List<String> ids);
+  Future<void> saveTodosToFavorites(List<String> ids, String userId);
 
   /// Deletes a [List] of todos from the logged-in users favorites.
   ///
   /// If no todo exists with one of the ids, a [TodoNotFoundException] error is
   /// thrown.
-  Future<void> deleteTodosFromFavorites(List<String> ids);
+  Future<void> deleteTodosFromFavorites(List<String> ids, String userId);
 }
 
 /// Error thrown when a [Todo] with a given id is not found.

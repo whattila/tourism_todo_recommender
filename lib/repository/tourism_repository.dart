@@ -34,13 +34,13 @@ class TourismRepository {
 
   Future<List<Todo>> searchTodosInDetail(DetailedSearchData searchData) => _dataClient.searchTodosInDetail(searchData);
 
-  Stream<List<Todo>> getSavedTodos(String userId) => _dataClient.getSavedTodos(userId);
+  Stream<List<Todo>> getFavoriteTodos(String userId) => _dataClient.getFavoriteTodos(userId);
 
   Future<void> uploadTodo(Todo todo) => _dataClient.uploadTodo(todo);
 
-  Future<void> saveTodosToFavorites(List<String> ids) => _dataClient.saveTodosToFavorites(ids);
+  Future<void> saveTodosToFavorites(List<String> ids, String userId) => _dataClient.saveTodosToFavorites(ids, userId);
 
-  Future<void> deleteTodosFromFavorites(List<String> ids) => _dataClient.deleteTodosFromFavorites(ids);
+  Future<void> deleteTodosFromFavorites(List<String> ids, String userId) => _dataClient.deleteTodosFromFavorites(ids, userId);
 
   Stream<User> get user => _authenticator.user;
 
