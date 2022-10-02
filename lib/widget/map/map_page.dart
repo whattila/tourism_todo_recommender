@@ -1,10 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../bloc/favorites/favorites_bloc.dart';
-import '../../bloc/favorites/favorites_event.dart';
-import '../../bloc/favorites/favorites_state.dart';
 import '../../models/todo.dart';
 
 const LatLng DEFAULT_LOCATION = LatLng(42.7477863,-71.1699932);
@@ -22,7 +18,7 @@ class MapPage extends StatefulWidget {
 
 class MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _controller = Completer();
-  final Set<Marker> _markers = <Marker>{};
+  final Set<Marker> _markers = Set<Marker>();
   double pinPillPosition = PIN_INVISIBLE_POSITION;
   late LatLng todoLatLng;
 
@@ -41,9 +37,9 @@ class MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Todo location'),
-      ),
+        appBar: AppBar(
+          title: const Text('Todo location'),
+        ),
         body: Stack(
           children: [
             Positioned.fill(
@@ -66,12 +62,12 @@ class MapPageState extends State<MapPage> {
               ),
             ),
             AnimatedPositioned(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-              left: 0,
-              right: 0,
-              bottom: pinPillPosition,
-              child: MapBottomPill(todo: widget.todo,)
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                left: 0,
+                right: 0,
+                bottom: pinPillPosition,
+                child: MapBottomPill(todo: widget.todo,)
             ),
           ],
         )
@@ -81,13 +77,13 @@ class MapPageState extends State<MapPage> {
   Future<void> showPinsOnMap() async {
     setState(() {
       _markers.add(Marker(
-        markerId: const MarkerId('todoPin'),
-        position: todoLatLng,
-        onTap: () {
-          setState(() {
-            pinPillPosition = PIN_VISIBLE_POSITION;
-          });
-        }
+          markerId: const MarkerId('todoPin'),
+          position: todoLatLng,
+          onTap: () {
+            setState(() {
+              pinPillPosition = PIN_VISIBLE_POSITION;
+            });
+          }
       ));
     });
   }
@@ -101,19 +97,19 @@ class MapBottomPill extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: [
-              BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 10,
-                  offset: Offset.zero
-              )
-            ]
-        ),
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                offset: Offset.zero
+            )
+          ]
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -129,26 +125,6 @@ class MapBottomPill extends StatelessWidget{
           ),
           Text(todo.nature,
               style: const TextStyle(fontSize: 17)
-          ),
-          BlocBuilder<FavoritesBloc, FavoritesState>(
-              buildWhen: (previousState, state) =>
-                  previousState.isTodoFavorite(todo) != state.isTodoFavorite(todo),
-              builder: (context, state) {
-                final isFavorite = state.isTodoFavorite(todo);
-                return ElevatedButton.icon(
-                  icon: isFavorite ? const Icon(Icons.star) : const Icon(Icons.star_border),
-                  label: isFavorite ? const Text('Delete from favorites') : const Text('Save to favorites'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: () => context.read<FavoritesBloc>().add(
-                      isFavorite ?
-                      TodosDeletedFromFavorites(todos: [todo]) :
-                      TodosSavedToFavorites(todos: [todo])
-                  ),
-                );
-              }
           ),
         ],
       ),

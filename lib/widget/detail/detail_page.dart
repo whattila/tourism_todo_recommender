@@ -23,34 +23,6 @@ class DetailPage extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  BlocBuilder<FavoritesBloc, FavoritesState>(
-                      buildWhen: (previousState, state) =>
-                          previousState.isTodoFavorite(todo) != state.isTodoFavorite(todo),
-                      builder: (context, state) {
-                        final isFavorite = state.isTodoFavorite(todo);
-                        return ElevatedButton.icon(
-                          icon: isFavorite ? const Icon(Icons.star) : const Icon(Icons.star_border),
-                          label: isFavorite ? const Text('Delete from favorites') : const Text('Save to favorites'),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                          ),
-                          onPressed: () => context.read<FavoritesBloc>().add(
-                              isFavorite ?
-                              TodosDeletedFromFavorites(todos: [todo]) :
-                              TodosSavedToFavorites(todos: [todo])
-                          ),
-                        );
-                      }
-                  ),
-                ],
-              )
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
               child: Text(
                 todo.shortDescription,
                 style: const TextStyle(

@@ -177,8 +177,8 @@ class _SearchResultItem extends StatelessWidget {
             )
         );
       },
-      trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+      trailing: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             BlocBuilder<FavoritesBloc, FavoritesState>(
                 buildWhen: (previousState, state) =>
@@ -214,7 +214,7 @@ class _SearchResultItem extends StatelessWidget {
                 }
               },
             ),
-          ]
+          ],
       ),
     );
   }
