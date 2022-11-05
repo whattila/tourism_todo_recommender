@@ -72,6 +72,7 @@ class _SearchFormState extends State<_SearchForm> {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: we could use a Form widget here
     return Column(
       children: <Widget>[
         TextFormField(

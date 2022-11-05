@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:tourism_todo_recommender/data/data_client.dart';
 import 'package:tourism_todo_recommender/data/device_services.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
@@ -36,7 +39,8 @@ class TourismRepository {
 
   Stream<List<Todo>> getFavoriteTodos(String userId) => _dataClient.getFavoriteTodos(userId);
 
-  Future<void> uploadTodo(Todo todo) => _dataClient.uploadTodo(todo);
+  Future<void> uploadTodo(Todo todo, {List<Uint8List> imagesToUpload = const[], List<String> remainingImages = const []})
+      => _dataClient.uploadTodo(todo, imagesToUpload: imagesToUpload, remainingImages: remainingImages);
 
   Future<void> saveTodosToFavorites(List<String> ids, String userId) => _dataClient.saveTodosToFavorites(ids, userId);
 
@@ -59,4 +63,6 @@ class TourismRepository {
   Future<Geolocation?> getLocationFromAddress(String address) => _geocoder.getLocationFromAddress(address);
 
   Future<Geolocation> getDeviceLocation() => _deviceServices.getDeviceLocation();
+
+  Future<List<XFile>> getImages(ImageSource source) => _deviceServices.getImages(source);
 }

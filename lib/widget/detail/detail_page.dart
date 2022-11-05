@@ -1,10 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../bloc/favorites/favorites_bloc.dart';
-import '../../bloc/favorites/favorites_event.dart';
-import '../../bloc/favorites/favorites_state.dart';
+import 'package:tourism_todo_recommender/widget/upload/image_item.dart';
 import '../../models/todo.dart';
+import '../image/image_page.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({Key? key, required this.todo}) : super(key: key);
@@ -87,9 +85,73 @@ class DetailPage extends StatelessWidget {
                 ),
               ),
             ),
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Images:',
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            _ImageList(todo: todo,),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ImageList extends StatelessWidget {
+  const _ImageList({Key? key, required this.todo}) : super(key: key);
+
+  final Todo todo;
+
+  @override
+  Widget build(BuildContext context) {
+    if (todo.imageReferences.isEmpty) {
+      return const Center(
+        child: Text(
+          'No images',
+          style: TextStyle(fontSize: 20),
+        ),
+      );
+    }
+    return GridView.builder(
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        // TODO: try crossAxisSpacing and mainAxisSpacing in practice
+        crossAxisSpacing: 0,
+        mainAxisSpacing: 0,
+        crossAxisCount: 2,
+      ),
+      itemCount: todo.imageReferences.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ImagePage(image: NetworkImageItem(todo.imageReferences[index]))),
+            );
+          },
+          child: CachedNetworkImage(
+            imageUrl: todo.imageReferences[index],
+            placeholder: (context, url)
+                => Container(
+                      transform: Matrix4.diagonal3Values(0.5, 0.5, 0.5),
+                      child: const CircularProgressIndicator(),
+                    ),
+            errorWidget: (context, url, error)
+                => Container(
+                      transform: Matrix4.diagonal3Values(0.5, 0.5, 0.5),
+                      child: const Icon(Icons.error),
+                    ),
+          ),
+        );
+      },
     );
   }
 }

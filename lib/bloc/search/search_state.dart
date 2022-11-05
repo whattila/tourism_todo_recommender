@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../../models/todo.dart';
 
 abstract class SearchState extends Equatable {

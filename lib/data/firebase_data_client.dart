@@ -1,14 +1,20 @@
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:tourism_todo_recommender/data/data_client.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import 'package:tourism_todo_recommender/models/todo.dart';
+import 'package:uuid/uuid.dart';
 
 class FirebaseDataClient extends DataClient {
-  FirebaseDataClient({FirebaseFirestore? firebaseFirestore})
-      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
+  FirebaseDataClient({FirebaseFirestore? firebaseFirestore, FirebaseStorage? firebaseStorage})
+      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
+        _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance;
 
   final FirebaseFirestore _firebaseFirestore;
+  final FirebaseStorage _firebaseStorage;
 
   @override
   Future<void> deleteTodosFromFavorites(List<String> ids, String userId) async {
@@ -22,20 +28,20 @@ class FirebaseDataClient extends DataClient {
     Stream<QuerySnapshot> favoriteIdsStream = _firebaseFirestore.collection(userId).snapshots();
     return favoriteIdsStream.switchMap(
             (qShot) {
-              final favoriteIds = [];
-              for (var doc in qShot.docs) {
-                favoriteIds.add(doc.id);
-              }
-              final favoriteTodosStream = _firebaseFirestore
-                  .collection('todos')
-                  .where('id', whereIn: favoriteIds)
-                  .snapshots();
-              return favoriteTodosStream.map(
-                      (qShot) => qShot.docs.map(
-                          (doc) => Todo.fromJson(doc.data())
-                  ).toList()
-              );
-            }
+          final favoriteIds = [];
+          for (var doc in qShot.docs) {
+            favoriteIds.add(doc.id);
+          }
+          final favoriteTodosStream = _firebaseFirestore
+              .collection('todos')
+              .where('id', whereIn: favoriteIds)
+              .snapshots();
+          return favoriteTodosStream.map(
+                  (qShot) => qShot.docs.map(
+                      (doc) => Todo.fromJson(doc.data())
+              ).toList()
+          );
+        }
     );
   }
 
@@ -81,15 +87,20 @@ class FirebaseDataClient extends DataClient {
   }
 
   @override
-  Future<void> uploadTodo(Todo todo) async {
+  Future<void> uploadTodo(Todo todo, {List<Uint8List> imagesToUpload = const[], List<String> remainingImages = const[]}) async {
+    final String id;
+    // TODO: retest normal upload!
     if (todo.id == '') {
-      final document = _firebaseFirestore.collection('todos').doc();
-      final trueTodo = todo.copyWith(id: document.id);
-      await document.set(trueTodo.toJson());
+      id = _firebaseFirestore.collection('todos').doc().id;
     }
     else {
-      await _firebaseFirestore.collection('todos').doc(todo.id).set(todo.toJson());
+      id = todo.id;
     }
+
+    final imageURLs = await _updateImages(todo, imagesToUpload, remainingImages);
+
+    final trueTodo = todo.copyWith(id: id, imageReferences: imageURLs);
+    await _firebaseFirestore.collection('todos').doc(trueTodo.id).set(trueTodo.toJson());
   }
 
   @override
@@ -103,5 +114,39 @@ class FirebaseDataClient extends DataClient {
                 (doc) => Todo.fromJson(doc.data() as Map<String, dynamic>)
         ).toList()
     );
+  }
+
+  Future<List<String>> _updateImages(Todo todo, List<Uint8List> imagesToUpload, List<String> remainingImages) async {
+    final imagesToDelete = todo.imageReferences.where((element) => remainingImages.contains(element) == false).toList();
+    await _deleteImages(imagesToDelete);
+    final newImageURLs = await _uploadImages(imagesToUpload, todo);
+    return remainingImages + newImageURLs;
+  }
+
+  Future<List<String>> _uploadImages(List<Uint8List> images, Todo todo) async {
+    final imageURLs = <String>[];
+    const uuid = Uuid();
+
+    for (final image in images) {
+      final imagePath = '${todo.id}/${uuid.v4()}.jpg';
+      final imageReference = _firebaseStorage.ref().child(imagePath);
+      try {
+        await imageReference.putData(image); // can it cause problems if we partially wrote here before during an unsuccessful write?
+        final imageURL = await imageReference.getDownloadURL();
+        imageURLs.add(imageURL);
+      } on FirebaseException catch (e) {
+        // Caught an exception from Firebase.
+        print("Failed with error '${e.code}': ${e.message}");
+      }
+    }
+
+    return imageURLs;
+  }
+
+  Future<void> _deleteImages(List<String> imageURLs) async {
+    for (final imageURL in imageURLs) {
+      final imageReference = _firebaseStorage.refFromURL(imageURL);
+      await imageReference.delete();
+    }
   }
 }

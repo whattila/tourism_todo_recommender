@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_event.dart';
 import '../../bloc/upload/upload_bloc.dart';
 import '../../bloc/upload/upload_state.dart';
 import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
+import '../image/image_page.dart';
 
 class UploadPage extends StatelessWidget {
   const UploadPage({Key? key}) : super(key: key);
@@ -38,13 +40,33 @@ class UploadPage extends StatelessWidget {
           );
         Navigator.of(context).pop();
       },
-      child: const UploadView(),
+      child: const _UploadForm(),
     );
   }
 }
 
-class UploadView extends StatelessWidget {
-  const UploadView({Key? key}) : super(key: key);
+class _UploadForm extends StatefulWidget {
+  const _UploadForm({Key? key}) : super(key: key);
+
+  @override
+  _UploadFormState createState() => _UploadFormState();
+}
+
+class _UploadFormState extends State<_UploadForm> {
+  final _key = GlobalKey<FormState>();
+  late final TextEditingController _shortDescriptionController;
+  late final TextEditingController _natureController;
+  late final TextEditingController _addressController;
+  late final TextEditingController _detailedDescriptionController;
+
+  @override
+  void initState() {
+    super.initState();
+    _shortDescriptionController = TextEditingController(text: context.read<UploadBloc>().state.initialTodo?.shortDescription);
+    _natureController = TextEditingController(text: context.read<UploadBloc>().state.initialTodo?.nature);
+    _addressController = TextEditingController(text: context.read<UploadBloc>().state.initialTodo?.address);
+    _detailedDescriptionController = TextEditingController(text: context.read<UploadBloc>().state.initialTodo?.detailedDescription);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,164 +78,231 @@ class UploadView extends StatelessWidget {
     const fabBackgroundColor = Colors.deepOrange;
     const fabForegroundColor = Colors.white;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          isNewTodo
-              ? 'Create and upload new todo'
-              : 'Edit my todo',
+    return Form(
+      key: _key,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            isNewTodo
+                ? 'Create and upload new todo'
+                : 'Edit my todo',
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text(isNewTodo ? 'UPLOAD' : 'UPDATE'),
-        backgroundColor: status.isLoadingOrSuccess
-            ? fabBackgroundColor.withOpacity(0.5)
-            : fabBackgroundColor,
-        foregroundColor: fabForegroundColor,
-        onPressed: status.isLoadingOrSuccess
-            ? null
-            : () => context.read<UploadBloc>().add(const UploadSubmitted()),
-      ),
-      body: Scrollbar(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: const [_ShortDescriptionField(), _NatureField(), _AddressField(), _LongDescriptionField()],
+        floatingActionButton: FloatingActionButton.extended(
+          icon: const Icon(Icons.upload),
+          label: Text(isNewTodo ? 'UPLOAD' : 'UPDATE'),
+          backgroundColor: status.isLoadingOrSuccess
+              ? fabBackgroundColor.withOpacity(0.5)
+              : fabBackgroundColor,
+          foregroundColor: fabForegroundColor,
+          onPressed: status.isLoadingOrSuccess ?
+          null
+              : () => context.read<UploadBloc>().add(
+              UploadSubmitted(
+                  detailedDescription: _detailedDescriptionController.value.text,
+                  nature: _natureController.value.text,
+                  address: _addressController.value.text,
+                  shortDescription: _shortDescriptionController.value.text
+              )
+          ),
+        ),
+        body: Scrollbar(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: <Widget>[
+                  TextFormField(
+                    controller: _shortDescriptionController,
+                    decoration: InputDecoration(
+                        enabled: !status.isLoadingOrSuccess,
+                        labelText: 'Short description',
+                        hintText: 'The short description of your touristic todo',
+                        border: const OutlineInputBorder()
+                    ),
+                    maxLength: UploadBloc.shortDescriptionMaxCharacters,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(UploadBloc.shortDescriptionMaxCharacters),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _natureController,
+                    decoration: InputDecoration(
+                        enabled: !status.isLoadingOrSuccess,
+                        labelText: 'Nature',
+                        hintText: 'What kind of activity your touristic todo is',
+                        border: const OutlineInputBorder()
+                    ),
+                    maxLength: UploadBloc.natureMaxCharacters,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(UploadBloc.natureMaxCharacters),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _addressController,
+                    decoration: InputDecoration(
+                        enabled: !status.isLoadingOrSuccess,
+                        labelText: 'Address',
+                        hintText: 'The most accurate location where the todo is found',
+                        border: const OutlineInputBorder()
+                    ),
+                    maxLength: UploadBloc.addressMaxCharacters,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(UploadBloc.addressMaxCharacters),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _detailedDescriptionController,
+                    decoration: InputDecoration(
+                        enabled: !status.isLoadingOrSuccess,
+                        labelText: 'Detailed description',
+                        hintText: 'The detailed description of your touristic todo',
+                        border: const OutlineInputBorder()
+                    ),
+                    minLines: 6,
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    maxLength: UploadBloc.detailedDescriptionMaxCharacters,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(UploadBloc.detailedDescriptionMaxCharacters),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  const _ImageHeader(),
+                  const SizedBox(height: 8),
+                  const _ImageList(),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _shortDescriptionController.dispose();
+    _natureController.dispose();
+    _addressController.dispose();
+    _detailedDescriptionController.dispose();
+    super.dispose();
+  }
 }
 
-class _ShortDescriptionField extends StatelessWidget {
-  const _ShortDescriptionField({Key? key}) : super(key: key);
+class _ImageHeader extends StatelessWidget {
+  const _ImageHeader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<UploadBloc>().state;
-    final hintText = state.initialTodo?.shortDescription ?? 'The short description of your touristic todo';
+    final status = context.select((UploadBloc bloc) => bloc.state.status);
 
-    // Users should not write something too long here.
-    const maximumCharacters = 50;
-
-    return TextFormField(
-      key: const Key('uploadView_shortDescription_textFormField'),
-      initialValue: state.shortDescription,
-      decoration: InputDecoration(
-        enabled: !state.status.isLoadingOrSuccess,
-        labelText: 'Short description',
-        hintText: hintText,
-        border: const OutlineInputBorder()
-      ),
-      maxLength: maximumCharacters,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(maximumCharacters),
+    return Column(
+      children: [
+        // TODO: replace this with dialog
+        ElevatedButton.icon(
+          onPressed: status.isLoadingOrSuccess ?
+          null
+              :() => context.read<UploadBloc>().add(const ImageAddRequested(source: ImageSource.camera)),
+          icon: const Icon(Icons.camera_alt),
+          label: const Text("Take picture with camera"),
+          style: ButtonStyle(
+            backgroundColor: status.isLoadingOrSuccess ?
+            MaterialStateProperty.all<Color>(Colors.orange.withOpacity(0.5))
+                : MaterialStateProperty.all<Color>(Colors.orange),
+            foregroundColor: status.isLoadingOrSuccess ?
+            MaterialStateProperty.all<Color>(Colors.black.withOpacity(0.5))
+                : MaterialStateProperty.all<Color>(Colors.black),
+          ),
+        ),
+        const SizedBox(height: 4),
+        ElevatedButton.icon(
+          onPressed: status.isLoadingOrSuccess ?
+          null
+              :() => context.read<UploadBloc>().add(const ImageAddRequested(source: ImageSource.gallery)),
+          icon: const Icon(Icons.photo_album),
+          label: const Text("Select images from gallery"),
+          style: ButtonStyle(
+            backgroundColor: status.isLoadingOrSuccess ?
+            MaterialStateProperty.all<Color>(Colors.red.withOpacity(0.5))
+                : MaterialStateProperty.all<Color>(Colors.red),
+            foregroundColor: status.isLoadingOrSuccess ?
+            MaterialStateProperty.all<Color>(Colors.white.withOpacity(0.5))
+                : MaterialStateProperty.all<Color>(Colors.white),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: const [
+            Text(
+              'Your current images:',
+              textAlign: TextAlign.start,
+              style: TextStyle(fontSize: 25),
+            ),
+          ],
+        )
       ],
-      onChanged: (value) {
-        context.read<UploadBloc>().add(UploadShortDescriptionChanged(value));
-      },
     );
   }
 }
 
-class _NatureField extends StatelessWidget {
-  const _NatureField({Key? key}) : super(key: key);
+class _ImageList extends StatelessWidget {
+  const _ImageList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<UploadBloc>().state;
-    final hintText = state.initialTodo?.nature ?? 'What kind of activity your touristic todo is';
+    return BlocBuilder<UploadBloc, UploadState>(
+        buildWhen: (previous, current) =>
+        previous.images.length != current.images.length
+            || current.status.isLoadingOrSuccess,
+        builder: (context, state) {
+          if (state.images.isEmpty) {
+            return const Center(
+              child: Text(
+                'You haven\'t added any images yet',
+                style: TextStyle(fontSize: 20),
+              ),
+            );
+          }
+          return GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisSpacing: 0,
+              mainAxisSpacing: 2,
+              crossAxisCount: 2,
+            ),
+            itemCount: state.images.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: state.status.isLoadingOrSuccess ?
+                null
+                    :() async {
+                  final delete = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ImagePage(image: state.images[index], modifiable: true,)),
+                  );
 
-    // Users should not write something too long here.
-    const maximumCharacters = 50;
-
-    return TextFormField(
-      key: const Key('uploadView_nature_textFormField'),
-      initialValue: state.nature,
-      decoration: InputDecoration(
-        enabled: !state.status.isLoadingOrSuccess,
-        labelText: 'Nature',
-        hintText: hintText,
-        border: const OutlineInputBorder()
-      ),
-      maxLength: maximumCharacters,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(maximumCharacters),
-      ],
-      onChanged: (value) {
-        context.read<UploadBloc>().add(UploadNatureChanged(value));
-      },
-    );
-  }
-}
-
-class _AddressField extends StatelessWidget {
-  const _AddressField({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final state = context.watch<UploadBloc>().state;
-    final hintText = state.initialTodo?.address ?? 'The most accurate location where the todo is found';
-
-    // It should not be too long, and I think this is enough for every case.
-    const maximumCharacters = 100;
-
-    return TextFormField(
-      key: const Key('uploadView_address_textFormField'),
-      initialValue: state.address,
-      decoration: InputDecoration(
-        enabled: !state.status.isLoadingOrSuccess,
-        labelText: 'Address',
-        hintText: hintText,
-        border: const OutlineInputBorder()
-      ),
-      maxLength: maximumCharacters,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(maximumCharacters),
-      ],
-      onChanged: (value) {
-        context.read<UploadBloc>().add(UploadAddressChanged(value));
-      },
-    );
-  }
-}
-
-class _LongDescriptionField extends StatelessWidget {
-  const _LongDescriptionField({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final state = context.watch<UploadBloc>().state;
-    final hintText = state.initialTodo?.detailedDescription ?? 'The detailed description of your touristic todo';
-
-    // Only the first 1,500 bytes of the UTF-8 representation are considered by queries by Cloud Firestore.
-    // 1 char in UTF-8 is 1 to 4 bytes.
-    // Actually now it does not matter as we search in the client app
-    // but if we switch to e.g. Algolia, it may matter
-    const maximumCharacters = 375;
-
-    return TextFormField(
-      key: const Key('uploadView_detailedDescription_textFormField'),
-      initialValue: state.detailedDescription,
-      decoration: InputDecoration(
-        enabled: !state.status.isLoadingOrSuccess,
-        labelText: 'Detailed description',
-        hintText: hintText,
-        border: const OutlineInputBorder()
-      ),
-      minLines: 6,
-      maxLines: null,
-      keyboardType: TextInputType.multiline,
-      maxLength: maximumCharacters,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(maximumCharacters),
-      ],
-      onChanged: (value) {
-        context.read<UploadBloc>().add(UploadDetailedDescriptionChanged(value));
-      },
+                  // TODO: can it be achieved that if we step back, we get false instead of null?
+                  if (delete != null && delete) {
+                    BlocProvider.of<UploadBloc>(context).add(ImageDeleted(deletedIndex: index));
+                  }
+                }
+                ,
+                child: Container(
+                  foregroundDecoration: BoxDecoration(
+                    color: state.status.isLoadingOrSuccess ?
+                    Colors.black.withOpacity(0.2) : null,
+                  ),
+                  child: state.images[index].createWidget(),
+                ),
+              );
+            },
+          );
+        }
     );
   }
 }

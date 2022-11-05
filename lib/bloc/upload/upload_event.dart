@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:tourism_todo_recommender/bloc/upload/upload_bloc.dart';
 
 abstract class UploadEvent extends Equatable {
   const UploadEvent();
@@ -7,42 +9,32 @@ abstract class UploadEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class UploadShortDescriptionChanged extends UploadEvent {
-  const UploadShortDescriptionChanged(this.shortDescription);
+class UploadSubmitted extends UploadEvent {
+  const UploadSubmitted({required this.shortDescription, required this.nature, required this.address, required this.detailedDescription});
 
   final String shortDescription;
-
-  @override
-  List<Object> get props => [shortDescription];
-}
-
-class UploadNatureChanged extends UploadEvent {
-  const UploadNatureChanged(this.nature);
-
   final String nature;
-
-  @override
-  List<Object> get props => [nature];
-}
-
-class UploadAddressChanged extends UploadEvent {
-  const UploadAddressChanged(this.address);
-
   final String address;
-
-  @override
-  List<Object> get props => [address];
-}
-
-class UploadDetailedDescriptionChanged extends UploadEvent {
-  const UploadDetailedDescriptionChanged(this.detailedDescription);
-
   final String detailedDescription;
 
   @override
-  List<Object> get props => [detailedDescription];
+  List<Object> get props => [shortDescription, nature, address, detailedDescription];
 }
 
-class UploadSubmitted extends UploadEvent {
-  const UploadSubmitted();
+class ImageAddRequested extends UploadEvent {
+  const ImageAddRequested({required this.source});
+
+  final ImageSource source;
+
+  @override
+  List<Object> get props => [source];
+}
+
+class ImageDeleted extends UploadEvent {
+  const ImageDeleted({required this.deletedIndex});
+
+  final int deletedIndex;
+
+  @override
+  List<Object> get props => [deletedIndex];
 }

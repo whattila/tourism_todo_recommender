@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:tourism_todo_recommender/models/todo.dart';
 
 import '../models/detailed_search_data.dart';
@@ -23,7 +25,7 @@ abstract class DataClient {
   Stream<List<Todo>> getFavoriteTodos(String userId);
 
   /// Uploads a [Todo] to the central database.
-  Future<void> uploadTodo(Todo todo);
+  Future<void> uploadTodo(Todo todo, {List<Uint8List> imagesToUpload = const[], List<String> remainingImages = const []});
 
   // TODO: ennél a kettőnél lehet hogy Future<int> kellene a mentett/törölt elemek számával?
 
