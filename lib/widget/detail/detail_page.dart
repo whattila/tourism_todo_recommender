@@ -130,26 +130,16 @@ class _ImageList extends StatelessWidget {
       ),
       itemCount: todo.imageReferences.length,
       itemBuilder: (context, index) {
+        final imageItem = NetworkImageItem(todo.imageReferences[index]);
+
         return GestureDetector(
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ImagePage(image: NetworkImageItem(todo.imageReferences[index]))),
+              MaterialPageRoute(builder: (context) => ImagePage(image: imageItem)),
             );
           },
-          child: CachedNetworkImage(
-            imageUrl: todo.imageReferences[index],
-            placeholder: (context, url)
-                => Container(
-                      transform: Matrix4.diagonal3Values(0.5, 0.5, 0.5),
-                      child: const CircularProgressIndicator(),
-                    ),
-            errorWidget: (context, url, error)
-                => Container(
-                      transform: Matrix4.diagonal3Values(0.5, 0.5, 0.5),
-                      child: const Icon(Icons.error),
-                    ),
-          ),
+          child: imageItem.createWidget()
         );
       },
     );

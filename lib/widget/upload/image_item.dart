@@ -28,15 +28,15 @@ class NetworkImageItem extends ImageItem {
   Widget createWidget() => CachedNetworkImage(
     imageUrl: url,
     placeholder: (context, url)
-    => Container(
-      transform: Matrix4.diagonal3Values(0.5, 0.5, 1),
-      child: const CircularProgressIndicator(),
-    ),
+      => Container(
+          transform: Matrix4.diagonal3Values(0.5, 0.5, 1),
+          child: const CircularProgressIndicator(),
+        ),
     errorWidget: (context, url, error)
-    => Container(
-      transform: Matrix4.diagonal3Values(0.5, 0.5, 1),
-      child: const Icon(Icons.error),
-    ),
+      => Container(
+          transform: Matrix4.diagonal3Values(0.5, 0.5, 1),
+          child: const Icon(Icons.error),
+        ),
   );
 }
 
