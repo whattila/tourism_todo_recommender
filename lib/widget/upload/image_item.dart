@@ -27,16 +27,8 @@ class NetworkImageItem extends ImageItem {
   @override
   Widget createWidget() => CachedNetworkImage(
     imageUrl: url,
-    placeholder: (context, url)
-      => Container(
-          transform: Matrix4.diagonal3Values(0.5, 0.5, 1),
-          child: const CircularProgressIndicator(),
-        ),
-    errorWidget: (context, url, error)
-      => Container(
-          transform: Matrix4.diagonal3Values(0.5, 0.5, 1),
-          child: const Icon(Icons.error),
-        ),
+    placeholder: (context, url) => const CircularProgressIndicator(),
+    errorWidget: (context, url, error) => const Icon(Icons.error),
   );
 }
 

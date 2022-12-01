@@ -89,7 +89,6 @@ class FirebaseDataClient extends DataClient {
   @override
   Future<void> uploadTodo(Todo todo, {List<Uint8List> imagesToUpload = const[], List<String> remainingImages = const[]}) async {
     final String id;
-    // TODO: retest normal upload!
     if (todo.id == '') {
       id = _firebaseFirestore.collection('todos').doc().id;
     }

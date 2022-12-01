@@ -146,13 +146,13 @@ class _SearchResults extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _SearchResultItem(item: items[index]);
-        },
-        separatorBuilder: (context, i) => const Divider()
+    return Scrollbar(
+      child: ListView(
+        children: [
+          for (final todo in items)
+            _SearchResultItem(item: todo)
+        ],
+      ),
     );
   }
 }
@@ -164,58 +164,68 @@ class _SearchResultItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      tileColor: Colors.white70,
-      title: Text(item.shortDescription),
-      subtitle: Text(item.address),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (context) => DetailPage(todo: item)
-            )
-        );
-      },
-      trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BlocBuilder<FavoritesBloc, FavoritesState>(
-                buildWhen: (previousState, state) =>
-                    previousState.isTodoFavorite(item) != state.isTodoFavorite(item),
-                builder: (context, state) {
-                  final isFavorite = state.isTodoFavorite(item);
-                  return IconButton(
-                    icon: isFavorite ? const Icon(Icons.star) : const Icon(Icons.star_border),
-                    tooltip: isFavorite ? 'Delete from favorites' : 'Save to favorites',
-                    onPressed: () => context.read<FavoritesBloc>().add(
-                        isFavorite ?
-                        TodosDeletedFromFavorites(todos: [item]) :
-                        TodosSavedToFavorites(todos: [item])
+    return Card(
+        child: ListTile(
+          tileColor: Colors.white,
+          title: Text(item.shortDescription),
+          subtitle: Text(item.address),
+          onTap: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(
+                    fullscreenDialog: true,
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<FavoritesBloc>(),
+                      child: DetailPage(todo: item),
                     ),
-                  );
-                }
-            ),
-            IconButton(
-              icon: const Icon(Icons.map),
-              tooltip: 'Show on map',
-              onPressed: () {
-                if (item.latitude != null && item.longitude != null) {
-                  Navigator.of(context).push<void>(MaterialPageRoute(
-                      builder: (context) => MapPage(todo: item)
-                  ));
-                }
-                else {
-                  ScaffoldMessenger.of(context)
-                    ..hideCurrentSnackBar()
-                    ..showSnackBar(
-                      const SnackBar(content: Text('This todo does not have valid coordinates')),
-                    );
-                }
-              },
-            ),
-          ],
-      ),
+                )
+            );
+          },
+          trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                BlocBuilder<FavoritesBloc, FavoritesState>(
+                    buildWhen: (previousState, state) =>
+                      previousState.isTodoFavorite(item) != state.isTodoFavorite(item),
+                    builder: (context, state) {
+                      final isFavorite = state.isTodoFavorite(item);
+                      return IconButton(
+                        icon: isFavorite ? const Icon(Icons.star) : const Icon(Icons.star_border),
+                        tooltip: isFavorite ? 'Delete from favorites' : 'Save to favorites',
+                        onPressed: () => context.read<FavoritesBloc>().add(
+                            isFavorite ?
+                            TodosDeletedFromFavorites(todos: [item]) :
+                            TodosSavedToFavorites(todos: [item])
+                        ),
+                      );
+                    }
+                ),
+                IconButton(
+                  icon: const Icon(Icons.map),
+                  tooltip: 'Show on map',
+                  onPressed: () {
+                    if (item.latitude != null && item.longitude != null) {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(
+                            fullscreenDialog: true,
+                            builder: (_) => BlocProvider.value(
+                              value: context.read<FavoritesBloc>(),
+                              child: MapPage(todo: item),
+                            ),
+                          )
+                      );
+                    }
+                    else {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(content: Text('This todo does not have valid coordinates')),
+                        );
+                    }
+                  },
+                ),
+              ],
+          ),
+        ),
     );
   }
 }

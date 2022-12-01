@@ -7,6 +7,7 @@ import 'package:tourism_todo_recommender/bloc/favorites/favorites_event.dart';
 import '../../bloc/favorites/favorites_state.dart';
 import '../../models/todo.dart';
 import '../detail/detail_page.dart';
+import '../map/map_page.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({Key? key}) : super(key: key);
@@ -67,23 +68,56 @@ class _TodoListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(item.shortDescription),
-      subtitle: Text(item.address),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                fullscreenDialog: true,
-                builder: (context) => DetailPage(todo: item)
-            )
-        );
-      },
-      trailing: IconButton(
-        icon: const Icon(Icons.star),
-        tooltip: 'Delete todo from favorites',
-        onPressed: () => context.read<FavoritesBloc>().add(TodosDeletedFromFavorites(todos: [item])),
-      ),
+    return Card(
+        child: ListTile(
+          title: Text(item.shortDescription),
+          subtitle: Text(item.address),
+          onTap: () {
+            Navigator.of(context).push(
+                MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (_) => BlocProvider.value(
+                    value: context.read<FavoritesBloc>(),
+                    child: DetailPage(todo: item),
+                  ),
+                )
+            );
+          },
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.star),
+                tooltip: 'Delete todo from favorites',
+                onPressed: () => context.read<FavoritesBloc>().add(TodosDeletedFromFavorites(todos: [item])),
+              ),
+              IconButton(
+                icon: const Icon(Icons.map),
+                tooltip: 'Show on map',
+                onPressed: () {
+                  if (item.latitude != null && item.longitude != null) {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<FavoritesBloc>(),
+                            child: MapPage(todo: item),
+                          ),
+                        )
+                    );
+                  }
+                  else {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(content: Text('This todo does not have valid coordinates')),
+                      );
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
     );
   }
 }

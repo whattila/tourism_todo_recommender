@@ -72,72 +72,74 @@ class _SearchFormState extends State<_SearchForm> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: we could use a Form widget here
-    return Column(
-      children: <Widget>[
-        TextFormField(
-          controller: uploaderController,
-          decoration: const InputDecoration(
-            hintText: 'Search for uploader',
-            border: OutlineInputBorder()
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: shortDescriptionController,
-          decoration: const InputDecoration(
-            hintText: 'Search in short description',
-            border: OutlineInputBorder()
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: addressController,
-          decoration: const InputDecoration(
-            hintText: 'Search in address',
-            border: OutlineInputBorder()
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: natureController,
-          decoration: const InputDecoration(
-            hintText: 'Search in nature',
-            border: OutlineInputBorder()
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: detailedDescriptionController,
-          decoration: const InputDecoration(
-            hintText: 'Search in detailed description',
-            border: OutlineInputBorder()
-          ),
-        ),
-        const SizedBox(height: 8),
-        const CheckboxRow(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  context.read<DetailedSearchCubit>().searchLaunched(
-                      uploaderSearchTerm: uploaderController.value.text,
-                      shortDescriptionSearchTerm: shortDescriptionController.value.text,
-                      addressSearchTerm: addressController.value.text,
-                      natureSearchTerm: natureController.value.text,
-                      detailedDescriptionSearchTerm: detailedDescriptionController.value.text
-                  );
-                },
-                icon: const Icon(Icons.search),
-                label: const Text("SEARCH"),
-              ),
+    return Form (
+        key: _key,
+        child: Column(
+        children: <Widget>[
+          TextFormField(
+            controller: uploaderController,
+            decoration: const InputDecoration(
+              hintText: 'Search for uploader',
+              border: OutlineInputBorder()
             ),
-          ],
-        )
-      ],
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: shortDescriptionController,
+            decoration: const InputDecoration(
+              hintText: 'Search in short description',
+              border: OutlineInputBorder()
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: addressController,
+            decoration: const InputDecoration(
+              hintText: 'Search in address',
+              border: OutlineInputBorder()
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: natureController,
+            decoration: const InputDecoration(
+              hintText: 'Search in nature',
+              border: OutlineInputBorder()
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: detailedDescriptionController,
+            decoration: const InputDecoration(
+              hintText: 'Search in detailed description',
+              border: OutlineInputBorder()
+            ),
+          ),
+          const SizedBox(height: 8),
+          const CheckboxRow(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    context.read<DetailedSearchCubit>().searchLaunched(
+                        uploaderSearchTerm: uploaderController.value.text,
+                        shortDescriptionSearchTerm: shortDescriptionController.value.text,
+                        addressSearchTerm: addressController.value.text,
+                        natureSearchTerm: natureController.value.text,
+                        detailedDescriptionSearchTerm: detailedDescriptionController.value.text
+                    );
+                  },
+                  icon: const Icon(Icons.search),
+                  label: const Text("SEARCH"),
+                ),
+              ),
+            ],
+          )
+        ],
+        ),
     );
   }
 
