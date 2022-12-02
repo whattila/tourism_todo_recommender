@@ -187,19 +187,18 @@ class _ImageList extends StatelessWidget {
         height: 250.0,
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
           itemCount: todo.imageReferences.length,
           itemBuilder: (context, index) {
             final imageItem = NetworkImageItem(todo.imageReferences[index]);
 
             return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ImagePage(image: imageItem)),
-                );
-              },
-              child: imageItem.createWidget()
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ImagePage(image: imageItem)),
+                  );
+                },
+                child: imageItem.createWidget()
             );
           },
           separatorBuilder: (_, __) => const SizedBox(width: 4),

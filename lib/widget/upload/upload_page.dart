@@ -292,13 +292,7 @@ class _ImageList extends StatelessWidget {
                   }
                 }
                 ,
-                child: Container(
-                  foregroundDecoration: BoxDecoration(
-                    color: state.status.isLoadingOrSuccess ?
-                    Colors.black.withOpacity(0.2) : null,
-                  ),
-                  child: state.images[index].createWidget(),
-                ),
+                child: state.images[index].createWidget(),
               );
             },
           );
