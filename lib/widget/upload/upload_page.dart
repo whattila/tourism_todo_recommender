@@ -96,15 +96,26 @@ class _UploadFormState extends State<_UploadForm> {
               : fabBackgroundColor,
           foregroundColor: fabForegroundColor,
           onPressed: status.isLoadingOrSuccess ?
-          null
-              : () => context.read<UploadBloc>().add(
-              UploadSubmitted(
-                  detailedDescription: _detailedDescriptionController.value.text,
-                  nature: _natureController.value.text,
-                  address: _addressController.value.text,
-                  shortDescription: _shortDescriptionController.value.text
-              )
-          ),
+              null
+              : () {
+                  if (_key.currentState?.validate() ?? false) {
+                    context.read<UploadBloc>().add(
+                        UploadSubmitted(
+                            detailedDescription: _detailedDescriptionController.value.text,
+                            nature: _natureController.value.text,
+                            address: _addressController.value.text,
+                            shortDescription: _shortDescriptionController.value.text
+                        )
+                    );
+                  }
+                  else {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(content: Text('No fields can be empty')),
+                      );
+                  }
+                }
         ),
         body: Scrollbar(
           child: SingleChildScrollView(
@@ -124,6 +135,7 @@ class _UploadFormState extends State<_UploadForm> {
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(UploadBloc.shortDescriptionMaxCharacters),
                     ],
+                    validator: UploadBloc.validateShortDescription,
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -138,6 +150,7 @@ class _UploadFormState extends State<_UploadForm> {
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(UploadBloc.natureMaxCharacters),
                     ],
+                    validator: UploadBloc.validateNature,
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -152,6 +165,7 @@ class _UploadFormState extends State<_UploadForm> {
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(UploadBloc.addressMaxCharacters),
                     ],
+                    validator: UploadBloc.validateAddress,
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -169,6 +183,7 @@ class _UploadFormState extends State<_UploadForm> {
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(UploadBloc.detailedDescriptionMaxCharacters),
                     ],
+                    validator: UploadBloc.validateDetailedDescription,
                   ),
                   const SizedBox(height: 8),
                   const _ImageHeader(),
@@ -257,8 +272,7 @@ class _ImageList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UploadBloc, UploadState>(
         buildWhen: (previous, current) =>
-        previous.images.length != current.images.length
-            || current.status.isLoadingOrSuccess,
+          previous.images.length != current.images.length || current.status.isLoadingOrSuccess,
         builder: (context, state) {
           if (state.images.isEmpty) {
             return const Center(

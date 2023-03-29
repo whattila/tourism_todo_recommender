@@ -14,7 +14,7 @@ class LoggedInView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: May switch to a MultiBlocProvider if more features come in
+    // May switch to a MultiBlocProvider if more features come in
     return BlocProvider(
       create: (_) => FavoritesBloc(
           tourismRepository: context.read<TourismRepository>()

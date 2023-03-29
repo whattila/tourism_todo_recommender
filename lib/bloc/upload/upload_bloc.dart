@@ -33,9 +33,37 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   // but if we switch to e.g. Algolia, it may matter
   static const detailedDescriptionMaxCharacters = 375;
 
+  static String? validateShortDescription(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Short description cannot be empty';
+    }
+    return null;
+  }
+
+  static String? validateNature(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Nature cannot be empty';
+    }
+    return null;
+  }
+
+  static String? validateAddress(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Address cannot be empty';
+    }
+    return null;
+  }
+
+  static String? validateDetailedDescription(String? value) {
+    if (value?.isEmpty ?? true) {
+      return 'Detailed description cannot be empty';
+    }
+    return null;
+  }
+
   Future<void> _onImageAddRequested(ImageAddRequested event, Emitter<UploadState> emit) async {
     // TODO: how we travel between states must be cleared
-    //emit(state.copyWith(status: UploadStatus.loading));
+    // emit(state.copyWith(status: UploadStatus.loading));
     try {
       final List<XFile> imageFiles = await _tourismRepository.getImages(event.source);
       final imageItems = <ImageItem>[];

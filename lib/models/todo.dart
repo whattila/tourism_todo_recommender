@@ -125,5 +125,4 @@ class Todo extends Equatable {
         detailedDescription,
         imageReferences
       ];
-
 }

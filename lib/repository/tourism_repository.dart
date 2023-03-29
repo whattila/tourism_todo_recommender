@@ -7,6 +7,7 @@ import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import '../data/authenticator.dart';
 import '../data/geocoder.dart';
 import '../models/geolocation.dart';
+import '../models/rating.dart';
 import '../models/todo.dart';
 import '../../models/user.dart';
 
@@ -65,4 +66,8 @@ class TourismRepository {
   Future<Geolocation> getDeviceLocation() => _deviceServices.getDeviceLocation();
 
   Future<List<XFile>> getImages(ImageSource source) => _deviceServices.getImages(source);
+
+  Future<void> addRating(Rating rating) => _dataClient.addRating(rating);
+
+  Stream<Rating> getRating(String todoId, String userId) => _dataClient.getRating(todoId, userId);
 }

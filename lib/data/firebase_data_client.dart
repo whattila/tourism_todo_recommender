@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:tourism_todo_recommender/data/data_client.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
+import 'package:tourism_todo_recommender/models/rating.dart';
 import 'package:tourism_todo_recommender/models/todo.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,6 +21,7 @@ class FirebaseDataClient extends DataClient {
   Future<void> deleteTodosFromFavorites(List<String> ids, String userId) async {
     for (var id in ids) {
       await _firebaseFirestore.collection(userId).doc(id).delete();
+      await FirebaseMessaging.instance.unsubscribeFromTopic(id);
     }
   }
 
@@ -28,27 +30,28 @@ class FirebaseDataClient extends DataClient {
     Stream<QuerySnapshot> favoriteIdsStream = _firebaseFirestore.collection(userId).snapshots();
     return favoriteIdsStream.switchMap(
             (qShot) {
-          final favoriteIds = [];
-          for (var doc in qShot.docs) {
-            favoriteIds.add(doc.id);
-          }
-          final favoriteTodosStream = _firebaseFirestore
-              .collection('todos')
-              .where('id', whereIn: favoriteIds)
-              .snapshots();
-          return favoriteTodosStream.map(
-                  (qShot) => qShot.docs.map(
-                      (doc) => Todo.fromJson(doc.data())
-              ).toList()
-          );
-        }
-    );
+              final favoriteIds = [];
+              for (var doc in qShot.docs) {
+                favoriteIds.add(doc.id);
+              }
+              final favoriteTodosStream = _firebaseFirestore
+                  .collection('todos')
+                  .where('id', whereIn: favoriteIds)
+                  .snapshots();
+              return favoriteTodosStream.map(
+                      (qShot) => qShot.docs.map(
+                          (doc) => Todo.fromJson(doc.data())
+                  ).toList()
+              );
+            }
+      );
   }
 
   @override
   Future<void> saveTodosToFavorites(List<String> ids, String userId) async {
     for (var id in ids) {
       await _firebaseFirestore.collection(userId).doc(id).set({});
+      await FirebaseMessaging.instance.subscribeToTopic(id);
     }
   }
 
@@ -113,6 +116,42 @@ class FirebaseDataClient extends DataClient {
                 (doc) => Todo.fromJson(doc.data() as Map<String, dynamic>)
         ).toList()
     );
+  }
+
+  @override
+  Future<void> addRating(Rating rating) async {
+    if (rating.isNotEmpty) {
+      await _firebaseFirestore
+          .collection('todos')
+          .doc(rating.todoId)
+          .collection('ratings')
+          .doc(rating.userId)
+          .set(rating.toJson());
+    }
+    else {
+      throw ArgumentError('Empty rating cannot be uploaded!');
+    }
+  }
+
+  @override
+  Stream<Rating> getRating(String todoId, String userId) {
+    final ratingStream = _firebaseFirestore
+        .collection('todos')
+        .doc(todoId)
+        .collection('ratings')
+        .doc(userId)
+        .snapshots();
+    return ratingStream.map(
+            (dShot) {
+              if (dShot.exists) {
+                final rating = Rating.fromJson(dShot.data() as Map<String, dynamic>);
+                return rating.copyWith(userId: userId, todoId: todoId); // we do this because the server data only includes the value
+              }
+              else {
+                return Rating.empty; // ha később exists lesz, lecserélődik az empty?
+              }
+            }
+        );
   }
 
   Future<List<String>> _updateImages(Todo todo, List<Uint8List> imagesToUpload, List<String> remainingImages) async {

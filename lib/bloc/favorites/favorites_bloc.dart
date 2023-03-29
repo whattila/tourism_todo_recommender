@@ -10,10 +10,10 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
     required TourismRepository tourismRepository,
   })  : _tourismRepository = tourismRepository,
         super(const FavoritesState()) {
-    on<FavoritesSubscriptionRequested>(_onSubscriptionRequested);
-    on<TodosSavedToFavorites>(_onTodosSaved);
-    on<TodosDeletedFromFavorites>(_onTodosDeleted);
-  }
+          on<FavoritesSubscriptionRequested>(_onSubscriptionRequested);
+          on<TodosSavedToFavorites>(_onTodosSaved);
+          on<TodosDeletedFromFavorites>(_onTodosDeleted);
+        }
 
   final TourismRepository _tourismRepository;
 

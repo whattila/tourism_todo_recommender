@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:tourism_todo_recommender/models/todo.dart';
 
 import '../models/detailed_search_data.dart';
+import '../models/rating.dart';
 
 /// {@template data_client}
 /// The interface for an API that provides access to the data a logged-in user works with (e.g. uploaded todos).
@@ -40,6 +41,12 @@ abstract class DataClient {
   /// If no todo exists with one of the ids, a [TodoNotFoundException] error is
   /// thrown.
   Future<void> deleteTodosFromFavorites(List<String> ids, String userId);
+
+  /// Saves a new or updated rating a user gave to a todo.
+  Future<void> addRating(Rating rating);
+
+  /// Provides a [Stream] to the [Rating] of the current user of a todo
+  Stream<Rating> getRating(String todoId, String userId);
 }
 
 /// Error thrown when a [Todo] with a given id is not found.
