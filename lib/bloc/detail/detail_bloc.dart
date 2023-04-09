@@ -32,9 +32,11 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
 
   Future<void> _onRatingChanged(RatingChanged event, Emitter<DetailState> emit) async {
     try {
-      _tourismRepository.addRating(event.rating);
+      final userId = _tourismRepository.currentUser.id;
+      final rating = event.rating.copyWith(userId: userId);
+      _tourismRepository.addRating(rating);
     } catch (_) {
-      // TODO: we should switch to loading before uploading, then success or failure. But this is a seperate issue.
+      // TODO: we should switch to loading before uploading, then success or failure. But this is a separate issue.
     }
   }
 }

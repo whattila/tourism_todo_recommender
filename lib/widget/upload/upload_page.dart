@@ -29,7 +29,7 @@ class UploadPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<UploadBloc, UploadState>(
       listenWhen: (previous, current) =>
-      previous.status != current.status &&
+          previous.status != current.status &&
           current.status == UploadStatus.success,
       listener: (context, state) {
         final snackBarText = state.isNewTodo ? 'Todo uploaded successfully' : 'Todo updated successfully';

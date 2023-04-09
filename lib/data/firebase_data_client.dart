@@ -102,7 +102,8 @@ class FirebaseDataClient extends DataClient {
     final imageURLs = await _updateImages(todo, imagesToUpload, remainingImages);
 
     final trueTodo = todo.copyWith(id: id, imageReferences: imageURLs);
-    await _firebaseFirestore.collection('todos').doc(trueTodo.id).set(trueTodo.toJson());
+    await _firebaseFirestore.collection('todos').doc(trueTodo.id).set(trueTodo.toJson(), SetOptions(merge: true));
+    // we need 'SetOptions(merge: true)' not to overwrite derived data like rating average
   }
 
   @override

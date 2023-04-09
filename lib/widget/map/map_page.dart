@@ -117,41 +117,97 @@ class MapBottomPill extends StatelessWidget{
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(todo.shortDescription,
-              style: TextStyle(
-                  color: Colors.grey[700],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20
-              )
-          ),
-          Text(todo.address,
-              style: const TextStyle(fontSize: 17)
-          ),
-          Text(todo.nature,
-              style: const TextStyle(fontSize: 17)
-          ),
-          BlocBuilder<FavoritesBloc, FavoritesState>(
-              buildWhen: (previousState, state) =>
-                previousState.isTodoFavorite(todo) != state.isTodoFavorite(todo),
-              builder: (context, state) {
-                final isFavorite = state.isTodoFavorite(todo);
-                return ElevatedButton.icon(
-                  icon: isFavorite ? const Icon(Icons.star) : const Icon(Icons.star_border),
-                  label: isFavorite ? const Text('Delete from favorites') : const Text('Save to favorites'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                  ),
-                  onPressed: () => BlocProvider.of<FavoritesBloc>(context).add(
-                      isFavorite ?
-                      TodosDeletedFromFavorites(todos: [todo]) :
-                      TodosSavedToFavorites(todos: [todo])
-                  ),
-                );
-              }
-          ),
+          _ShortDescription(todo: todo),
+          _Address(todo: todo),
+          Nature(todo: todo),
+          FavoriteButton(todo: todo),
         ],
       ),
+    );
+  }
+}
+
+class FavoriteButton extends StatelessWidget {
+  const FavoriteButton({
+    Key? key,
+    required this.todo,
+  }) : super(key: key);
+
+  final Todo todo;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FavoritesBloc, FavoritesState>(
+        buildWhen: (previousState, state) =>
+          previousState.isTodoFavorite(todo) != state.isTodoFavorite(todo),
+        builder: (context, state) {
+          final isFavorite = state.isTodoFavorite(todo);
+          return ElevatedButton.icon(
+            icon: isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
+            label: isFavorite ? const Text('Delete from favorites') : const Text('Save to favorites'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            ),
+            onPressed: () => BlocProvider.of<FavoritesBloc>(context).add(
+                isFavorite ?
+                TodosDeletedFromFavorites(todos: [todo]) :
+                TodosSavedToFavorites(todos: [todo])
+            ),
+          );
+        }
+    );
+  }
+}
+
+class Nature extends StatelessWidget {
+  const Nature({
+    Key? key,
+    required this.todo,
+  }) : super(key: key);
+
+  final Todo todo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(todo.nature,
+        style: const TextStyle(fontSize: 17)
+    );
+  }
+}
+
+class _Address extends StatelessWidget {
+  const _Address({
+    Key? key,
+    required this.todo,
+  }) : super(key: key);
+
+  final Todo todo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(todo.address,
+        style: const TextStyle(fontSize: 17)
+    );
+  }
+}
+
+class _ShortDescription extends StatelessWidget {
+  const _ShortDescription({
+    Key? key,
+    required this.todo,
+  }) : super(key: key);
+
+  final Todo todo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(todo.shortDescription,
+        style: TextStyle(
+            color: Colors.grey[700],
+            fontWeight: FontWeight.bold,
+            fontSize: 20
+        )
     );
   }
 }

@@ -66,7 +66,7 @@ class HomeView extends StatelessWidget {
             _HomeTabButton(
               groupValue: selectedTab,
               value: HomeTab.favorites,
-              icon: const Icon(Icons.star),
+              icon: const Icon(Icons.favorite),
             ),
             _HomeTabButton(
               groupValue: selectedTab,

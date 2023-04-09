@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tourism_todo_recommender/models/rate_statistics.dart';
 
 part 'todo.g.dart';
 
@@ -20,7 +21,8 @@ class Todo extends Equatable {
     this.latitude,
     this.longitude,
     required this.detailedDescription,
-    required this.imageReferences
+    required this.imageReferences,
+    this.rateStatistics = RateStatistics.empty
   });
 
   /// Creates a Todo from a json (map) representation
@@ -76,6 +78,16 @@ class Todo extends Equatable {
   /// If there aren't any, it's an empty list.
   final List<String> imageReferences;
 
+  /// The rate statistics of this todo.
+  /// If they do not exist yet, it is the RateStatistics.empty null object
+  /// (starting from json_serializable 5, generated fromJson uses default parameters from constructor).
+  /// We don't upload this to Cloud Firestore:
+  /// the _toNull in toJson will null the value and then the includeIfNull won't serialize the value.
+  @JsonKey(includeIfNull: false, toJson: _toNull)
+  final RateStatistics rateStatistics;
+
+  static _toNull(_) => null;
+
   /// Returns a copy of this todo with the given values updated.
   ///
   /// {@macro todo}
@@ -89,7 +101,8 @@ class Todo extends Equatable {
     double? latitude,
     double? longitude,
     String? detailedDescription,
-    List<String>? imageReferences
+    List<String>? imageReferences,
+    RateStatistics? rateStatistics
   }) {
     return Todo(
         id: id ?? this.id,
@@ -101,7 +114,8 @@ class Todo extends Equatable {
         latitude: latitude ?? this.latitude,
         longitude: longitude ?? this.longitude,
         detailedDescription: detailedDescription ?? this.detailedDescription,
-        imageReferences: imageReferences ?? this.imageReferences
+        imageReferences: imageReferences ?? this.imageReferences,
+        rateStatistics: rateStatistics ?? this.rateStatistics
     );
   }
 
@@ -123,6 +137,7 @@ class Todo extends Equatable {
         latitude,
         longitude,
         detailedDescription,
-        imageReferences
+        imageReferences,
+        rateStatistics
       ];
 }

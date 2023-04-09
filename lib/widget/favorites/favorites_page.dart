@@ -5,6 +5,7 @@ import 'package:tourism_todo_recommender/bloc/favorites/favorites_event.dart';
 
 import '../../bloc/favorites/favorites_state.dart';
 import '../../models/todo.dart';
+import '../../repository/tourism_repository.dart';
 import '../detail/detail_page.dart';
 import '../map/map_page.dart';
 
@@ -15,8 +16,7 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<FavoritesBloc, FavoritesState>(
-        listenWhen: (previous, current) =>
-        previous.status != current.status,
+        listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {
           if (state.status == FavoritesStatus.failure) {
             ScaffoldMessenger.of(context)
@@ -69,6 +69,7 @@ class _TodoListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
+          leading: _RatingAverage(item: item),
           title: Text(item.shortDescription),
           subtitle: Text(item.address),
           onTap: () {
@@ -85,38 +86,89 @@ class _TodoListTile extends StatelessWidget {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                icon: const Icon(Icons.star),
-                tooltip: 'Delete todo from favorites',
-                onPressed: () => context.read<FavoritesBloc>().add(TodosDeletedFromFavorites(todos: [item])),
-              ),
-              IconButton(
-                icon: const Icon(Icons.map),
-                tooltip: 'Show on map',
-                onPressed: () {
-                  if (item.latitude != null && item.longitude != null) {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(
-                          fullscreenDialog: true,
-                          builder: (_) => BlocProvider.value(
-                            value: context.read<FavoritesBloc>(),
-                            child: MapPage(todo: item),
-                          ),
-                        )
-                    );
-                  }
-                  else {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(content: Text('This todo does not have valid coordinates')),
-                      );
-                  }
-                },
-              ),
+              _FavoriteIconButton(item: item),
+              _MapIconButton(item: item),
             ],
           ),
         ),
+    );
+  }
+}
+
+class _RatingAverage extends StatelessWidget {
+  const _RatingAverage({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
+
+  final Todo item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(
+          Icons.star,
+          color: Colors.amber,
+        ),
+        Text(item.rateStatistics.average.toString()),
+      ],
+    );
+  }
+}
+
+class _MapIconButton extends StatelessWidget {
+  const _MapIconButton({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
+
+  final Todo item;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.map),
+      tooltip: 'Show on map',
+      onPressed: () {
+        if (item.latitude != null && item.longitude != null) {
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (_) => BlocProvider.value(
+                  value: context.read<FavoritesBloc>(),
+                  child: MapPage(todo: item),
+                ),
+              )
+          );
+        }
+        else {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(content: Text('This todo does not have valid coordinates')),
+            );
+        }
+      },
+    );
+  }
+}
+
+class _FavoriteIconButton extends StatelessWidget {
+  const _FavoriteIconButton({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
+
+  final Todo item;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.favorite, color: Colors.red,),
+      tooltip: 'Delete todo from favorites',
+      onPressed: () => context.read<FavoritesBloc>().add(TodosDeletedFromFavorites(todos: [item])),
     );
   }
 }

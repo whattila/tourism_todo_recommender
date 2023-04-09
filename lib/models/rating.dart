@@ -13,11 +13,17 @@ class Rating extends Equatable {
   });
 
   factory Rating({String? todoId, String? userId, required int value}) {
-    if (value > 5 || value < 0) {
+    if (value > maxRatingValue || value < minRatingValue) {
       throw ArgumentError('Invalid value parameter');
     }
     return Rating._(todoId: todoId, userId: userId, value: value);
   }
+
+  /// The minimum rating a user can give.
+  static const minRatingValue = 1;
+
+  /// The maximum rating a user can give.
+  static const maxRatingValue = 5;
 
   /// Creates a [Rating] from a json (map) representation
   /// when querying from Cloud Firestore
