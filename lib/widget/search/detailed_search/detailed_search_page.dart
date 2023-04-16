@@ -117,6 +117,20 @@ class _SearchFormState extends State<_SearchForm> {
           ),
           const SizedBox(height: 8),
           const CheckboxRow(),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Average rating between:',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SliderRow(),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -174,6 +188,42 @@ class CheckboxRow extends StatelessWidget {
         const Text("Only nearby todos",
           style: TextStyle(fontSize: 20),
         )
+      ],
+    );
+  }
+}
+
+class SliderRow extends StatelessWidget {
+  const SliderRow({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<DetailedSearchCubit>().state;
+    final minRatingAverageValue = state.minRatingAverageValue;
+    final maxRatingAverageValue = state.maxRatingAverageValue;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text('${DetailedSearchCubit.minRatingAverage.round()} \u{2b50}', style: const TextStyle(fontSize: 18),),
+        Expanded(
+          child: RangeSlider(
+            values: RangeValues(minRatingAverageValue, maxRatingAverageValue),
+            min: DetailedSearchCubit.minRatingAverage,
+            max: DetailedSearchCubit.maxRatingAverage,
+            divisions: 5,
+            labels: RangeLabels(
+              minRatingAverageValue.round().toString(),
+              maxRatingAverageValue.round().toString(),
+            ),
+            onChanged: (values) {
+              context.read<DetailedSearchCubit>().onRatingAverageValuesChanged(
+                values.start,
+                values.end,
+              );
+            },
+          ),
+        ),
+        Text('${DetailedSearchCubit.maxRatingAverage.round()} \u{2b50}', style: const TextStyle(fontSize: 18),),
       ],
     );
   }

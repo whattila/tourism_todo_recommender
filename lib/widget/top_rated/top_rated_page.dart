@@ -1,43 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tourism_todo_recommender/bloc/favorites/favorites_bloc.dart';
-import 'package:tourism_todo_recommender/bloc/favorites/favorites_event.dart';
-
-import '../../bloc/favorites/favorites_state.dart';
+import 'package:tourism_todo_recommender/bloc/favorites/favorites_state.dart';
+import '../../bloc/favorites/favorites_event.dart';
+import '../../bloc/top_rated/top_rated_bloc.dart';
 import '../../models/todo.dart';
 import '../../repository/tourism_repository.dart';
 import '../detail/detail_page.dart';
 import '../map/map_page.dart';
+import '../upload/upload_page.dart';
 
-class FavoritesPage extends StatelessWidget {
-  const FavoritesPage({Key? key}) : super(key: key);
+class TopRatedPage extends StatelessWidget {
+  const TopRatedPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => TopRatedBloc(
+        tourismRepository: context.read<TourismRepository>(),
+      )..add(const TopRatedSubscriptionRequested()),
+      child: const TopRatedView(),
+    );
+  }
+}
+
+class TopRatedView extends StatelessWidget {
+  const TopRatedView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<FavoritesBloc, FavoritesState>(
+      body: BlocListener<TopRatedBloc, TopRatedState>(
         listenWhen: (previous, current)
-          => current.status == FavoritesStatus.failure,
+          => current.status == TopRatedStatus.failure,
         listener: (context, state) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               const SnackBar(
-                content: Text('An error occurred while loading your favorite todos'),
+                content: Text('An error occurred while loading the top rated todos'),
               ),
             );
         },
-        child: BlocBuilder<FavoritesBloc, FavoritesState>(
+        child: BlocBuilder<TopRatedBloc, TopRatedState>(
           builder: (context, state) {
-            if (state.favorites.isEmpty) {
-              if (state.status == FavoritesStatus.loading) {
+            if (state.todos.isEmpty) {
+              if (state.status == TopRatedStatus.loading) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (state.status != FavoritesStatus.success) {
+              } else if (state.status != TopRatedStatus.success) {
                 return const SizedBox();
               } else {
                 return const Center(
                   child: Text(
-                    'You don\'t have any favorite todos',
+                    'There are no todos (with ratings)',
                     style: TextStyle(fontSize: 20),
                   ),
                 );
@@ -47,7 +62,7 @@ class FavoritesPage extends StatelessWidget {
             return Scrollbar(
               child: ListView(
                 children: [
-                  for (final todo in state.favorites)
+                  for (final todo in state.todos)
                     _TodoListTile(item: todo)
                 ],
               ),
@@ -67,29 +82,29 @@ class _TodoListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        child: ListTile(
-          leading: _RatingAverage(item: item),
-          title: Text(item.shortDescription),
-          subtitle: Text(item.address),
-          onTap: () {
-            Navigator.of(context).push(
-                MaterialPageRoute(
-                  fullscreenDialog: true,
-                  builder: (_) => BlocProvider.value(
-                    value: context.read<FavoritesBloc>(),
-                    child: DetailPage(todo: item),
-                  ),
-                )
-            );
-          },
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _FavoriteIconButton(item: item),
-              _MapIconButton(item: item),
-            ],
-          ),
+      child: ListTile(
+        leading: _RatingAverage(item: item),
+        title: Text(item.shortDescription),
+        subtitle: Text(item.address),
+        onTap: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                fullscreenDialog: true,
+                builder: (_) => BlocProvider.value(
+                  value: context.read<FavoritesBloc>(),
+                  child: DetailPage(todo: item),
+                ),
+              )
+          );
+        },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _FavoriteButton(item: item),
+            _MapIconButton(item: item),
+          ],
         ),
+      ),
     );
   }
 }
@@ -154,8 +169,8 @@ class _MapIconButton extends StatelessWidget {
   }
 }
 
-class _FavoriteIconButton extends StatelessWidget {
-  const _FavoriteIconButton({
+class _FavoriteButton extends StatelessWidget {
+  const _FavoriteButton({
     Key? key,
     required this.item,
   }) : super(key: key);
@@ -164,10 +179,30 @@ class _FavoriteIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.favorite, color: Colors.red,),
-      tooltip: 'Delete todo from favorites',
-      onPressed: () => context.read<FavoritesBloc>().add(TodosDeletedFromFavorites(todos: [item])),
+    return BlocBuilder<FavoritesBloc, FavoritesState>(
+        buildWhen: (previousState, state) =>
+        previousState.isTodoFavorite(item) != state.isTodoFavorite(item),
+        builder: (context, state) {
+          final isFavorite = state.isTodoFavorite(item);
+          return IconButton(
+            icon: isFavorite ?
+            const Icon(
+              Icons.favorite,
+              color: Colors.red,
+            )
+                : const Icon(
+              Icons.favorite_border,
+              color: Colors.red,
+            )
+            ,
+            tooltip: isFavorite ? 'Delete from favorites' : 'Save to favorites',
+            onPressed: () => context.read<FavoritesBloc>().add(
+                isFavorite ?
+                TodosDeletedFromFavorites(todos: [item]) :
+                TodosSavedToFavorites(todos: [item])
+            ),
+          );
+        }
     );
   }
 }

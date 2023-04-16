@@ -70,4 +70,6 @@ class TourismRepository {
   Future<void> addRating(Rating rating) => _dataClient.addRating(rating);
 
   Stream<Rating> getRating(String todoId, String userId) => _dataClient.getRating(todoId, userId);
+
+  Stream<List<Todo>> getTopRatedTodos(int count) => _dataClient.getTopRatedTodos(count);
 }

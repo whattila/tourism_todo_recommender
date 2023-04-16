@@ -34,6 +34,10 @@ class AppView extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.orange,
+        sliderTheme: const SliderThemeData(
+          valueIndicatorColor: Colors.white,
+          valueIndicatorTextStyle: TextStyle(fontSize: 20, color: Colors.black)
+        )
       ),
       home: FlowBuilder<AuthenticationStatus>(
         state: context.select((AuthenticationBloc bloc) => bloc.state.status),

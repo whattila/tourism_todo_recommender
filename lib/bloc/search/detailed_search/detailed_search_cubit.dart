@@ -3,15 +3,25 @@ import 'package:tourism_todo_recommender/data/device_services.dart';
 import 'package:tourism_todo_recommender/data/geocoder.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import 'package:tourism_todo_recommender/models/geolocation.dart';
+import '../../../models/rating.dart';
 import 'detailed_search_state.dart';
 
 class DetailedSearchCubit extends Cubit<DetailedSearchState> {
   DetailedSearchCubit(this._listener) : super(const DetailedSearchState.initial());
 
+  static const minRatingAverage = 0.0;
+  static const maxRatingAverage = 5.0; // TODO: should convert this from the Rating max somehow...
+
   final DetailedSearchRequestListener _listener;
 
   void nearbyOnlyCheckedChanged(bool checked) {
     emit(state.copyWith(isNearbyOnlyChecked: checked));
+  }
+
+  void onRatingAverageValuesChanged(double start, double end) {
+    emit(
+      state.copyWith(minRatingAverageValue: start, maxRatingAverageValue: end),
+    );
   }
 
   Future<void> searchLaunched({
@@ -46,7 +56,9 @@ class DetailedSearchCubit extends Cubit<DetailedSearchState> {
         natureSearchTerm: natureSearchTerm,
         addressSearchTerm: addressSearchTerm,
         detailedDescriptionSearchTerm: detailedDescriptionSearchTerm,
-        userLocation: userLocation
+        userLocation: userLocation,
+        ratingMinValue: state.minRatingAverageValue,
+        ratingMaxValue: state.maxRatingAverageValue
     );
 
     emit(state.copyWith(isSubmitted: true));

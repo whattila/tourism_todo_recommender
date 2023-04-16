@@ -108,13 +108,13 @@ class FirebaseDataClient extends DataClient {
 
   @override
   Stream<List<Todo>> getOwnTodos(String userId) {
-    Stream<QuerySnapshot> stream = _firebaseFirestore
+    final stream = _firebaseFirestore
         .collection('todos')
         .where('uploaderId', isEqualTo: userId)
         .snapshots();
     return stream.map(
             (qShot) => qShot.docs.map(
-                (doc) => Todo.fromJson(doc.data() as Map<String, dynamic>)
+                (doc) => Todo.fromJson(doc.data())
         ).toList()
     );
   }
@@ -153,6 +153,20 @@ class FirebaseDataClient extends DataClient {
               }
             }
         );
+  }
+
+  @override
+  Stream<List<Todo>> getTopRatedTodos(int count) {
+    final topRatedQueryStream = _firebaseFirestore
+        .collection('todos')
+        .orderBy('rateStatistics.average', descending: true)
+        .limit(count)
+        .snapshots();
+    return topRatedQueryStream.map(
+            (qShot) => qShot.docs.map(
+                (doc) => Todo.fromJson(doc.data())
+        ).toList()
+    );
   }
 
   Future<List<String>> _updateImages(Todo todo, List<Uint8List> imagesToUpload, List<String> remainingImages) async {

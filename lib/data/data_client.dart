@@ -47,6 +47,9 @@ abstract class DataClient {
 
   /// Provides a [Stream] to the [Rating] of the current user of a todo
   Stream<Rating> getRating(String todoId, String userId);
+
+  /// Provides the [Stream] of the todos with the highest average rating currently.
+  Stream<List<Todo>> getTopRatedTodos(int count);
 }
 
 /// Error thrown when a [Todo] with a given id is not found.

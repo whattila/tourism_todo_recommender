@@ -32,18 +32,16 @@ class OwnTodosView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<OwnTodosBloc, OwnTodosState>(
-        listenWhen: (previous, current) =>
-        previous.status != current.status,
+        listenWhen: (previous, current)
+          => current.status == OwnTodosStatus.failure,
         listener: (context, state) {
-          if (state.status == OwnTodosStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text('An error occurred while loading your uploaded todos'),
-                ),
-              );
-          }
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              const SnackBar(
+                content: Text('An error occurred while loading your uploaded todos'),
+              ),
+            );
         },
         child: BlocBuilder<OwnTodosBloc, OwnTodosState>(
           builder: (context, state) {
@@ -117,7 +115,7 @@ class _RatingAverage extends StatelessWidget {
           Icons.star,
           color: Colors.amber,
         ),
-        Text(item.rateStatistics.average.toString()),
+        Text(item.rateStatistics.average.toStringAsPrecision(2)),
       ],
     );
   }

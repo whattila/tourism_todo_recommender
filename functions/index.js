@@ -1,7 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp(functions.config().firebase);
-
+const app = admin.initializeApp(functions.config().firebase);
+const firestore = app.firestore();
 
 exports.sendNotificationToTopic = 
 functions.firestore.document('todos/{todoId}').onUpdate(async (event) => {
@@ -21,54 +21,71 @@ functions.firestore.document('todos/{todoId}').onUpdate(async (event) => {
 
 exports.updateRateStatisticsAtCreate = 
 functions.firestore.document('todos/{todoId}/ratings/{ratingId}').onCreate(async (newRating) => {
-    let todoRef = newRating.ref.parent.parent
-	let todo = await todoRef.get()
-    let rateStatistics = todo.get("rateStatistics")
-    if (typeof rateStatistics === 'undefined') {
-        // ha ez az első értékelés
-        rateStatistics = {
-            counter: 0,
-            average: 0.0,
-            counterFiveStars: 0,
-            counterFourStars: 0,
-            counterThreeStars: 0,
-            counterTwoStars: 0,
-            counterOneStars: 0
-        }
+    try {
+        await firestore.runTransaction(async (transaction) => {
+            let todo = await transaction.get(newRating.ref.parent.parent)
+            let rateStatistics = todo.get("rateStatistics")
+            if (typeof rateStatistics === 'undefined') {
+                // ha ez az első értékelés
+                rateStatistics = {
+                    counter: 0,
+                    average: 0.0,
+                    counterFiveStars: 0,
+                    counterFourStars: 0,
+                    counterThreeStars: 0,
+                    counterTwoStars: 0,
+                    counterOneStars: 0
+                }
+            }
+            rateStatistics.counter++
+            let value = newRating.get("value")
+            incrementCounterXStars(value, rateStatistics)
+            ratingsAverage(rateStatistics)
+            transaction.update(newRating.ref.parent.parent, {rateStatistics: rateStatistics})
+        })
+        console.log('Transaction success!');
+    } catch (e) {
+      console.log('Transaction failure:', e);
     }
-    rateStatistics.counter++
-    let value = newRating.get("value")
-    incrementCounterXStars(value, rateStatistics)
-    ratingsAverage(rateStatistics)
-    await todoRef.update({rateStatistics: rateStatistics})
-    // a pontosvesszők hiánya nem okoz gondot, főleg így hogy van olyan utasítás, ami több sorra van tördelve?
 });
 
 exports.updateRateStatisticsAtUpdate =
 functions.firestore.document('todos/{todoId}/ratings/{ratingId}').onUpdate(async (event) => {
-    let todoRef = event.after.ref.parent.parent
-	let todo = await todoRef.get()
-    let rateStatistics = todo.get("rateStatistics")
-    // mivel egy értékelés megváltozott, biztos hogy volt korábban értékelés, így nem kell undefined vizsgálatot végezni
+    try {
+        await firestore.runTransaction(async (transaction) => {
+            let todo = await transaction.get(event.after.ref.parent.parent)
+            let rateStatistics = todo.get("rateStatistics")
+            // mivel egy értékelés megváltozott, biztos hogy volt korábban értékelés, így nem kell undefined vizsgálatot végezni
 
-    let oldValue = event.before.get("value")
-    decrementCounterXStars(oldValue, rateStatistics);
-    let newValue = event.after.get("value")
-    incrementCounterXStars(newValue, rateStatistics);
-    ratingsAverage(rateStatistics);
-    await todoRef.update({rateStatistics: rateStatistics})
+            let oldValue = event.before.get("value")
+            decrementCounterXStars(oldValue, rateStatistics);
+            let newValue = event.after.get("value")
+            incrementCounterXStars(newValue, rateStatistics);
+            ratingsAverage(rateStatistics);
+            transaction.update(event.after.ref.parent.parent, {rateStatistics: rateStatistics}) // itt szerintem használhatnám az aftert is, vagy van különbség?
+        })
+        console.log('Transaction success!');
+    } catch (e) {
+      console.log('Transaction failure:', e);
+    }
 });
 
 exports.updateRateStatisticsAtDelete =
 functions.firestore.document('todos/{todoId}/ratings/{ratingId}').onDelete(async (deletedRating) => {
-    let todoRef = deletedRating.ref.parent.parent
-	let todo = await todoRef.get()
-    let rateStatistics = todo.get("rateStatistics")
-    rateStatistics.counter--
-    let deletedValue = deletedRating.get("value")
-    decrementCounterXStars(deletedValue, rateStatistics)
-    ratingsAverage(rateStatistics);
-    await todoRef.update({rateStatistics: rateStatistics})
+    try {
+        await firestore.runTransaction(async (transaction) => {
+            let todo = await transaction.get(deletedRating.ref.parent.parent)
+            let rateStatistics = todo.get("rateStatistics")
+            rateStatistics.counter--
+            let deletedValue = deletedRating.get("value")
+            decrementCounterXStars(deletedValue, rateStatistics)
+            ratingsAverage(rateStatistics);
+            transaction.update(deletedRating.ref.parent.parent, {rateStatistics: rateStatistics})
+        })
+        console.log('Transaction success!');
+    } catch (e) {
+      console.log('Transaction failure:', e);
+    }
 })
 
 function ratingsAverage(rateStatistics) {

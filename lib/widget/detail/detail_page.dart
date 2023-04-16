@@ -33,18 +33,15 @@ class DetailPage extends StatelessWidget {
       )..add(DetailSubscriptionRequested(todo: todo)),
       child: BlocListener<DetailBloc, DetailState>(
         listenWhen: (previous, current) =>
-            previous.status != current.status &&
-            current.status == DetailStatus.success,
+            current.status == DetailStatus.failure,
         listener: (context, state) {
-          if (state.status == FavoritesStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content: Text('An error occurred during the server operation'),
-                ),
-              );
-          }
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage),
+              ),
+            );
         },
         child: _DetailView(todo: todo,),
       ),

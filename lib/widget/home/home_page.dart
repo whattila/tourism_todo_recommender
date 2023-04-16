@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tourism_todo_recommender/widget/favorites/favorites_page.dart';
+import 'package:tourism_todo_recommender/widget/top_rated/top_rated_page.dart';
 import 'package:tourism_todo_recommender/widget/upload/upload_page.dart';
 import '../../bloc/authentication/authentication_bloc.dart';
 import '../../bloc/authentication/authentication_event.dart';
@@ -43,7 +44,7 @@ class HomeView extends StatelessWidget {
       ),
       body: IndexedStack(
         index: selectedTab.index,
-        children: const [SearchPage(), OwnTodosPage(), FavoritesPage()],
+        children: const [TopRatedPage(), SearchPage(), FavoritesPage(), OwnTodosPage()],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -60,6 +61,11 @@ class HomeView extends StatelessWidget {
           children: [
             _HomeTabButton(
               groupValue: selectedTab,
+              value: HomeTab.top,
+              icon: const Icon(Icons.star),
+            ),
+            _HomeTabButton(
+              groupValue: selectedTab,
               value: HomeTab.search,
               icon: const Icon(Icons.search),
             ),
@@ -71,7 +77,7 @@ class HomeView extends StatelessWidget {
             _HomeTabButton(
               groupValue: selectedTab,
               value: HomeTab.own,
-              icon: const Icon(Icons.auto_stories),
+              icon: const Icon(Icons.person),
             ),
           ],
         ),

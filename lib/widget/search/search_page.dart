@@ -210,7 +210,7 @@ class _RatingAverage extends StatelessWidget {
           Icons.star,
           color: Colors.amber,
         ),
-        Text(item.rateStatistics.average.toString()),
+        Text(item.rateStatistics.average.toStringAsPrecision(2)),
       ],
     );
   }

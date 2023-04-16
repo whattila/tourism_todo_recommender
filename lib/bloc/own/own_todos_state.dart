@@ -13,7 +13,6 @@ class OwnTodosState extends Equatable {
   final OwnTodosStatus status;
   final List<Todo> todos;
 
-
   OwnTodosState copyWith({
     OwnTodosStatus Function()? status,
     List<Todo> Function()? todos,

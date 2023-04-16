@@ -24,19 +24,22 @@ class DetailBloc extends Bloc<DetailEvent, DetailState> {
         status: DetailStatus.success,
         rating: rating,
       ),
-      onError: (_, __) => state.copyWith(
+      onError: (object, _) => state.copyWith(
         status: DetailStatus.failure,
+        errorMessage: object.toString()
       ),
     );
   }
 
   Future<void> _onRatingChanged(RatingChanged event, Emitter<DetailState> emit) async {
     try {
+      emit(state.copyWith(status: DetailStatus.loading));
       final userId = _tourismRepository.currentUser.id;
       final rating = event.rating.copyWith(userId: userId);
       _tourismRepository.addRating(rating);
-    } catch (_) {
-      // TODO: we should switch to loading before uploading, then success or failure. But this is a separate issue.
+    } catch (e) {
+      state.copyWith(status: DetailStatus.failure, errorMessage: e.toString());
+      // to handle errors that are not from the stream
     }
   }
 }

@@ -10,7 +10,9 @@ class DetailedSearchData {
     required this.natureSearchTerm,
     required this.addressSearchTerm,
     required this.detailedDescriptionSearchTerm,
-    required this.userLocation
+    required this.userLocation,
+    required this.ratingMinValue,
+    required this.ratingMaxValue
   });
 
   final String uploaderSearchTerm;
@@ -19,23 +21,24 @@ class DetailedSearchData {
   final String addressSearchTerm;
   final String detailedDescriptionSearchTerm;
   final Geolocation? userLocation;
+  final double ratingMinValue;
+  final double ratingMaxValue;
 
   // TODO: The user could be able to set this.
   static const _maxDistanceOfCloseTodosInKM = 10;
 
   /// Returns true if the given todo matches the conditions specified in this object
   /// otherwise returns false
-  bool isTodoMatching(Todo todo) {
-    return _areSearchTermsFound(todo) && _isTodoCloseToCurrentLocation(todo);
-  }
+  bool isTodoMatching(Todo todo)
+    => _areSearchTermsFound(todo) && _isTodoCloseToCurrentLocation(todo) && _isRatingAverageInGivenRange(todo);
 
-  bool _areSearchTermsFound (Todo todo) {
-    return todo.uploaderName.toLowerCase().contains(uploaderSearchTerm.toLowerCase())
+  bool _areSearchTermsFound (Todo todo)
+    => todo.uploaderName.toLowerCase().contains(uploaderSearchTerm.toLowerCase())
         && todo.shortDescription.toLowerCase().contains(shortDescriptionSearchTerm.toLowerCase())
         && todo.nature.toLowerCase().contains(natureSearchTerm.toLowerCase())
         && todo.address.toLowerCase().contains(addressSearchTerm.toLowerCase())
         && todo.detailedDescription.toLowerCase().contains(detailedDescriptionSearchTerm.toLowerCase());
-  }
+
 
   bool _isTodoCloseToCurrentLocation(Todo todo) {
     // if userLocation is null, we accept all todos regardless location
@@ -48,4 +51,7 @@ class DetailedSearchData {
     }
     return true;
   }
+
+  bool _isRatingAverageInGivenRange(Todo todo)
+    => todo.rateStatistics.average >= ratingMinValue && todo.rateStatistics.average <= ratingMaxValue;
 }
