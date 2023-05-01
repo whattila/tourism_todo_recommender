@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:tourism_todo_recommender/data/data_client.dart';
+import 'package:tourism_todo_recommender/models/comment.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import 'package:tourism_todo_recommender/models/rating.dart';
 import 'package:tourism_todo_recommender/models/todo.dart';
@@ -104,6 +105,7 @@ class FirebaseDataClient extends DataClient {
     final trueTodo = todo.copyWith(id: id, imageReferences: imageURLs);
     await _firebaseFirestore.collection('todos').doc(trueTodo.id).set(trueTodo.toJson(), SetOptions(merge: true));
     // we need 'SetOptions(merge: true)' not to overwrite derived data like rating average
+    await FirebaseMessaging.instance.subscribeToTopic(todo.uploaderId);
   }
 
   @override
@@ -165,6 +167,30 @@ class FirebaseDataClient extends DataClient {
     return topRatedQueryStream.map(
             (qShot) => qShot.docs.map(
                 (doc) => Todo.fromJson(doc.data())
+        ).toList()
+    );
+  }
+
+  @override
+  Future<void> addComment(Comment comment) async {
+    await _firebaseFirestore
+        .collection('todos')
+        .doc(comment.todoId)
+        .collection('comments')
+        .add(comment.toJson());
+  }
+
+  @override
+  Stream<List<Comment>> getTodoComments(Todo todo) {
+    final commentsQuerySnapshotStream = _firebaseFirestore
+        .collection('todos')
+        .doc(todo.id)
+        .collection('comments')
+        .orderBy('date', descending: true)
+        .snapshots();
+    return commentsQuerySnapshotStream.map(
+        (qShot) => qShot.docs.map(
+            (doc) => Comment.fromJson(doc.data())
         ).toList()
     );
   }

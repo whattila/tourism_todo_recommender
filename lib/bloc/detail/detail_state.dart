@@ -1,28 +1,39 @@
 import 'package:equatable/equatable.dart';
 
+import '../../models/comment.dart';
 import '../../models/rating.dart';
 
-enum DetailStatus { initial, loading, success, failure }
+enum RatingStatus { initial, loading, success, failure }
+enum CommentStatus { initial, loading, success, failure }
 
 class DetailState extends Equatable {
   const DetailState({
-    this.status = DetailStatus.initial,
+    this.ratingStatus = RatingStatus.initial,
+    this.commentStatus = CommentStatus.initial,
     this.rating = Rating.empty,
-    this.errorMessage = ''
+    this.comments = const [],
   });
 
-  /// The result of the last call to the server
-  final DetailStatus status;
+  /// The result of the last server operation with the rating
+  final RatingStatus ratingStatus;
+
+  /// The result of the last server operation with comments
+  final CommentStatus commentStatus;
 
   /// The rating the user currently has on this todo
   final Rating rating;
 
-  /// The description of the error if the last server operation was a failure.
-  final String errorMessage;
+  /// The comments given to this todo.
+  final List<Comment> comments;
 
-  DetailState copyWith({DetailStatus? status, Rating? rating, String? errorMessage})
-    => DetailState(status: status ?? this.status, rating: rating ?? this.rating, errorMessage: errorMessage ?? this.errorMessage);
+  DetailState copyWith({RatingStatus? ratingStatus, CommentStatus? commentStatus, Rating? rating, List<Comment>? comments})
+    => DetailState(
+        ratingStatus: ratingStatus ?? this.ratingStatus,
+        commentStatus: commentStatus ?? this.commentStatus,
+        rating: rating ?? this.rating,
+        comments: comments ?? this.comments,
+      );
 
   @override
-  List<Object?> get props => [status, rating, errorMessage];
+  List<Object?> get props => [ratingStatus, commentStatus, rating, comments];
 }

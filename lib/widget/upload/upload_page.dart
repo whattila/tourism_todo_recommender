@@ -95,27 +95,7 @@ class _UploadFormState extends State<_UploadForm> {
               ? fabBackgroundColor.withOpacity(0.5)
               : fabBackgroundColor,
           foregroundColor: fabForegroundColor,
-          onPressed: status.isLoadingOrSuccess ?
-              null
-              : () {
-                  if (_key.currentState?.validate() ?? false) {
-                    context.read<UploadBloc>().add(
-                        UploadSubmitted(
-                            detailedDescription: _detailedDescriptionController.value.text,
-                            nature: _natureController.value.text,
-                            address: _addressController.value.text,
-                            shortDescription: _shortDescriptionController.value.text
-                        )
-                    );
-                  }
-                  else {
-                    ScaffoldMessenger.of(context)
-                      ..hideCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(content: Text('No fields can be empty')),
-                      );
-                  }
-                }
+          onPressed: status.isLoadingOrSuccess ? null : _uploadTodo
         ),
         body: Scrollbar(
           child: SingleChildScrollView(
@@ -196,6 +176,26 @@ class _UploadFormState extends State<_UploadForm> {
         ),
       ),
     );
+  }
+
+  void _uploadTodo() {
+    if (_key.currentState?.validate() ?? false) {
+      context.read<UploadBloc>().add(
+          UploadSubmitted(
+              detailedDescription: _detailedDescriptionController.value.text,
+              nature: _natureController.value.text,
+              address: _addressController.value.text,
+              shortDescription: _shortDescriptionController.value.text
+          )
+      );
+    }
+    else {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(content: Text('No fields can be empty')),
+        );
+    }
   }
 
   @override

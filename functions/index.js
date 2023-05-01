@@ -3,11 +3,11 @@ const admin = require('firebase-admin');
 const app = admin.initializeApp(functions.config().firebase);
 const firestore = app.firestore();
 
-exports.sendNotificationToTopic = 
+exports.notifyFollowersOnTodoUpdate = 
 functions.firestore.document('todos/{todoId}').onUpdate(async (event) => {
     let id = event.after.id
     let title = event.after.get("shortDescription")
-    var message = {
+    let message = {
         notification: {
             title: "Favorite todo modified",
             body: `The details of one your favorite todos, ${title}, has been modified`,
@@ -86,6 +86,24 @@ functions.firestore.document('todos/{todoId}/ratings/{ratingId}').onDelete(async
     } catch (e) {
       console.log('Transaction failure:', e);
     }
+})
+
+exports.notifyUploaderOnCommentAdd =
+functions.firestore.document('todos/{todoId}/comments/{commentId}').onCreate(async (newComment) => {
+    let todoRef = newComment.ref.parent.parent
+	let todo = await todoRef.get()
+    let title = todo.get("shortDescription")
+    let uploaderId = todo.get("uploaderId")
+    let message = {
+        notification: {
+            title: "Comment added",
+            body: `Someone commented on your todo, ${title}`,
+        },
+        topic: uploaderId,
+    };
+
+    let response = await admin.messaging().send(message);
+    console.log(response);
 })
 
 function ratingsAverage(rateStatistics) {

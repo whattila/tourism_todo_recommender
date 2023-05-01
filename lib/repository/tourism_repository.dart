@@ -6,6 +6,7 @@ import 'package:tourism_todo_recommender/data/device_services.dart';
 import 'package:tourism_todo_recommender/models/detailed_search_data.dart';
 import '../data/authenticator.dart';
 import '../data/geocoder.dart';
+import '../models/comment.dart';
 import '../models/geolocation.dart';
 import '../models/rating.dart';
 import '../models/todo.dart';
@@ -72,4 +73,8 @@ class TourismRepository {
   Stream<Rating> getRating(String todoId, String userId) => _dataClient.getRating(todoId, userId);
 
   Stream<List<Todo>> getTopRatedTodos(int count) => _dataClient.getTopRatedTodos(count);
+
+  Future<void> addCommentToTodo(Comment comment) => _dataClient.addComment(comment);
+
+  Stream<List<Comment>> getTodoComments(Todo todo) => _dataClient.getTodoComments(todo);
 }

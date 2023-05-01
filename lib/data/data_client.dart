@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:tourism_todo_recommender/models/todo.dart';
 
+import '../models/comment.dart';
 import '../models/detailed_search_data.dart';
 import '../models/rating.dart';
 
@@ -50,6 +51,12 @@ abstract class DataClient {
 
   /// Provides the [Stream] of the todos with the highest average rating currently.
   Stream<List<Todo>> getTopRatedTodos(int count);
+
+  /// Uploads a new [Comment] for the given todo.
+  Future<void> addComment(Comment comment);
+
+  /// Provides a [Stream] of [Comments] of the given [Todo]
+  Stream<List<Comment>> getTodoComments(Todo todo);
 }
 
 /// Error thrown when a [Todo] with a given id is not found.

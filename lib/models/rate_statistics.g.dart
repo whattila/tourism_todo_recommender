@@ -17,3 +17,13 @@ RateStatistics _$RateStatisticsFromJson(Map<String, dynamic> json) =>
       counterOneStars: json['counterOneStars'] as int,
     );
 
+Map<String, dynamic> _$RateStatisticsToJson(RateStatistics instance) =>
+    <String, dynamic>{
+      'counter': instance.counter,
+      'average': instance.average,
+      'counterFiveStars': instance.counterFiveStars,
+      'counterFourStars': instance.counterFourStars,
+      'counterThreeStars': instance.counterThreeStars,
+      'counterTwoStars': instance.counterTwoStars,
+      'counterOneStars': instance.counterOneStars,
+    };

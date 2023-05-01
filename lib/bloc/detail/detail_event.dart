@@ -24,3 +24,13 @@ class RatingChanged extends DetailEvent {
   @override
   List<Object?> get props => [rating];
 }
+
+class CommentAdded extends DetailEvent {
+  const CommentAdded({required this.commentText, required this.todo});
+
+  final String commentText;
+  final Todo todo;
+
+  @override
+  List<Object?> get props => [commentText, todo];
+}

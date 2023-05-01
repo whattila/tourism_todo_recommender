@@ -148,6 +148,7 @@ class _SearchResults extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scrollbar(
       child: ListView(
+        // TODO: we may switch to builder here
         children: [
           for (final todo in items)
             _SearchResultItem(item: todo)

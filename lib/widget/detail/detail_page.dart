@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:rating_summary/rating_summary.dart';
+import 'package:tourism_todo_recommender/models/comment.dart';
 import 'package:tourism_todo_recommender/repository/tourism_repository.dart';
 import 'package:tourism_todo_recommender/widget/upload/image_item.dart';
-import '../../bloc/detail/detail_bloc.dart';
-import '../../bloc/detail/detail_event.dart';
-import '../../bloc/detail/detail_state.dart';
+import '../../bloc/comment/comment_bloc.dart';
 import '../../bloc/favorites/favorites_bloc.dart';
 import '../../bloc/favorites/favorites_event.dart';
 import '../../bloc/favorites/favorites_state.dart';
+import '../../bloc/rating/rating_bloc.dart';
 import '../../models/rating.dart';
 import '../../models/todo.dart';
 import '../image/image_page.dart';
@@ -27,25 +28,57 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => DetailBloc(
-          tourismRepository: context.read<TourismRepository>()
-      )..add(DetailSubscriptionRequested(todo: todo)),
-      child: BlocListener<DetailBloc, DetailState>(
-        listenWhen: (previous, current) =>
-            current.status == DetailStatus.failure,
-        listener: (context, state) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage),
-              ),
-            );
-        },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<RatingBloc>(
+          create: (context) => RatingBloc(
+              tourismRepository: context.read<TourismRepository>()
+          )..add(RatingSubscriptionRequested(todo: todo)),
+        ),
+        BlocProvider<CommentBloc>(
+          create: (context) => CommentBloc(
+              tourismRepository: context.read<TourismRepository>()
+          )..add(CommentSubscriptionRequested(todo: todo)),
+        ),
+      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<RatingBloc, RatingState>(
+            listenWhen: (previous, current) =>
+              current.status == RatingStatus.failure,
+            listener: (context, state) { _listenToRatingError(context, state); },
+          ),
+          BlocListener<CommentBloc, CommentState>(
+            listenWhen: (previous, current) =>
+              current.status == CommentStatus.failure,
+            listener: (context, state) { _listenToCommentError(context, state); },
+          ),
+        ],
         child: _DetailView(todo: todo,),
       ),
     );
+  }
+
+  void _listenToRatingError(BuildContext context, RatingState state) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(state.errorMessage),
+        ),
+      );
+  }
+
+  // TODO: megoldható valahogy, hogy egymás után jön egy ilyen és egy olyan error, akkor az első snackbarja ne tűnjön el azonnal?
+
+  void _listenToCommentError(BuildContext context, CommentState state) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(state.errorMessage),
+        ),
+      );
   }
 }
 
@@ -62,6 +95,7 @@ class _DetailView extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _ShortDescription(todo: todo),
@@ -130,11 +164,171 @@ class _DetailView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             _RatingStatistics(todo: todo),
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Comments:',
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            _CommentForm(todo: todo),
+            const SizedBox(height: 8),
+            const _CommentList(),
             const SizedBox(height: 16),
           ],
         ),
       ),
     );
+  }
+}
+
+class _CommentList extends StatelessWidget {
+  const _CommentList({Key? key}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CommentBloc, CommentState>(
+      buildWhen: (previous, current)
+        => previous.comments.length != current.comments.length || previous.status != current.status,
+      builder: (context, state) {
+        if (state.comments.isEmpty) {
+          if (state.status == CommentStatus.loading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state.status != CommentStatus.success) {
+            return const SizedBox();
+          } else {
+            return const Center(
+              child: Text(
+                'Be the first to comment!',
+                style: TextStyle(fontSize: 20),
+              ),
+            );
+          }
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+              for (final comment in state.comments)
+                _CommentTile(comment: comment)
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _CommentTile extends StatelessWidget {
+  const _CommentTile({Key? key, required this.comment}) : super(key: key);
+
+  final Comment comment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          shape: const RoundedRectangleBorder(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                comment.userName,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),),
+              Text(
+                '${comment.yearMonthDay}\n',
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Text(
+                comment.text,
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              )
+            ],
+          ),
+        );
+  }
+}
+
+class _CommentForm extends StatefulWidget {
+  const _CommentForm({Key? key, required this.todo}) : super(key: key);
+
+  final Todo todo;
+
+  @override
+  _CommentFormState createState() => _CommentFormState();
+}
+
+class _CommentFormState extends State<_CommentForm> {
+  final _key = GlobalKey<FormState>();
+  final controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Form(
+        key: _key,
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: TextFormField(
+                controller: controller,
+                decoration: const InputDecoration(
+                  hintText: 'Add a comment',
+                  border: OutlineInputBorder()
+                ),
+                maxLength: CommentBloc.commentMaxLength,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(CommentBloc.commentMaxLength)
+                ],
+                minLines: 3,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                validator: CommentBloc.validateComment,
+              ),
+            ),
+            IconButton(
+                onPressed: _sendComment,
+                icon: const Icon(Icons.send)
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _sendComment() {
+    if (_key.currentState?.validate() ?? false) {
+      context.read<CommentBloc>().add(
+          CommentAdded(commentText: controller.value.text, todo: widget.todo)
+      );
+      controller.clear();
+      FocusManager.instance.primaryFocus?.unfocus();
+    }
+  }
+  
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
 
@@ -376,7 +570,7 @@ class _Rater extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DetailBloc, DetailState>(
+    return BlocBuilder<RatingBloc, RatingState>(
         buildWhen: (previous, current) => previous.rating.value != current.rating.value,
         builder: (context, state) =>
             RatingBar.builder(
@@ -390,7 +584,7 @@ class _Rater extends StatelessWidget {
                 color: Colors.amber,
               ),
               onRatingUpdate: (rating) {
-                context.read<DetailBloc>().add(RatingChanged(rating: Rating(value: rating.toInt(), todoId: todo.id)));
+                context.read<RatingBloc>().add(RatingChanged(rating: Rating(value: rating.toInt(), todoId: todo.id)));
                 // tört értékelés elvileg nem lehet
               },
             )
@@ -406,14 +600,17 @@ class _RatingStatistics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return todo.rateStatistics.counter > 0 ?
-      RatingSummary(
-        counter: todo.rateStatistics.counter,
-        average: todo.rateStatistics.average,
-        counterFiveStars: todo.rateStatistics.counterFiveStars,
-        counterFourStars: todo.rateStatistics.counterFourStars,
-        counterThreeStars: todo.rateStatistics.counterThreeStars,
-        counterTwoStars: todo.rateStatistics.counterTwoStars,
-        counterOneStars: todo.rateStatistics.counterOneStars,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: RatingSummary(
+          counter: todo.rateStatistics.counter,
+          average: todo.rateStatistics.average,
+          counterFiveStars: todo.rateStatistics.counterFiveStars,
+          counterFourStars: todo.rateStatistics.counterFourStars,
+          counterThreeStars: todo.rateStatistics.counterThreeStars,
+          counterTwoStars: todo.rateStatistics.counterTwoStars,
+          counterOneStars: todo.rateStatistics.counterOneStars,
+        ),
       )
       : const Center(
           child: Text(
