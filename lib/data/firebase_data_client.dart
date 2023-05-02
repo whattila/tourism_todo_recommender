@@ -28,12 +28,15 @@ class FirebaseDataClient extends DataClient {
 
   @override
   Stream<List<Todo>> getFavoriteTodos(String userId) {
-    Stream<QuerySnapshot> favoriteIdsStream = _firebaseFirestore.collection(userId).snapshots();
+    final favoriteIdsStream = _firebaseFirestore.collection(userId).snapshots();
     return favoriteIdsStream.switchMap(
             (qShot) {
               final favoriteIds = [];
               for (var doc in qShot.docs) {
                 favoriteIds.add(doc.id);
+              }
+              if (favoriteIds.isEmpty) {
+                return Stream.value(<Todo>[]);
               }
               final favoriteTodosStream = _firebaseFirestore
                   .collection('todos')
