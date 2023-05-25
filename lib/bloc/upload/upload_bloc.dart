@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tourism_todo_recommender/bloc/upload/upload_event.dart';
@@ -11,6 +12,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   UploadBloc({required TourismRepository tourismRepository, required Todo? initialTodo,})
       : _tourismRepository = tourismRepository, super(UploadState.initial(initialTodo: initialTodo))
   {
+    on<CurrentAddressRequested>(_onCurrentAddressRequested);
     on<ImageAddRequested>(_onImageAddRequested);
     on<ImageDeleted>(_onImageDeleted);
     on<UploadSubmitted>(_onSubmitted);
@@ -32,6 +34,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   // Actually now it does not matter as we search in the client app
   // but if we switch to e.g. Algolia, it may matter
   static const detailedDescriptionMaxCharacters = 375;
+
+  // TODO: we should put these validators to the model class
 
   static String? validateShortDescription(String? value) {
     if (value?.isEmpty ?? true) {
@@ -61,6 +65,17 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     return null;
   }
 
+  Future<void> _onCurrentAddressRequested(CurrentAddressRequested event, Emitter<UploadState> emit) async {
+    try {
+      emit(state.copyWith(addressStatus: AddressStatus.loading));
+      final deviceLocation = await _tourismRepository.getDeviceLocation();
+      final address = await _tourismRepository.getAddressFromLocation(deviceLocation);
+      emit(state.copyWith(deviceAddress: address, addressStatus: AddressStatus.success));
+    } catch (e) {
+      emit(state.copyWith(addressStatus: AddressStatus.failure));
+    }
+  }
+
   Future<void> _onImageAddRequested(ImageAddRequested event, Emitter<UploadState> emit) async {
     // TODO: how we travel between states must be cleared
     // emit(state.copyWith(status: UploadStatus.loading));
@@ -88,7 +103,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   }
 
   Future<void> _onSubmitted(UploadSubmitted event, Emitter<UploadState> emit) async {
-    emit(state.copyWith(status: UploadStatus.loading));
+    emit(state.copyWith(uploadStatus: UploadStatus.loading));
     final location = await _tourismRepository.getLocationFromAddress(event.address);
     final todo = (state.initialTodo ?? const Todo(nature: '', detailedDescription: '', shortDescription: '', id: '', address: '', uploaderName: '', uploaderId: '', imageReferences: []))
         .copyWith(
@@ -113,9 +128,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     }
     try {
       await _tourismRepository.uploadTodo(todo, imagesToUpload: imagesToUpload, remainingImages: remainingURLs);
-      emit(state.copyWith(status: UploadStatus.success));
+      emit(state.copyWith(uploadStatus: UploadStatus.success));
     } catch (e) {
-      emit(state.copyWith(status: UploadStatus.failure));
+      emit(state.copyWith(uploadStatus: UploadStatus.failure));
     }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tourism_todo_recommender/bloc/upload/upload_bloc.dart';
 
 abstract class UploadEvent extends Equatable {
   const UploadEvent();
@@ -9,8 +8,17 @@ abstract class UploadEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class CurrentAddressRequested extends UploadEvent {
+  const CurrentAddressRequested();
+}
+
 class UploadSubmitted extends UploadEvent {
-  const UploadSubmitted({required this.shortDescription, required this.nature, required this.address, required this.detailedDescription});
+  const UploadSubmitted({
+    required this.shortDescription,
+    required this.nature,
+    required this.address,
+    required this.detailedDescription
+  });
 
   final String shortDescription;
   final String nature;

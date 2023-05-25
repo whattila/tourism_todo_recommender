@@ -64,6 +64,8 @@ class TourismRepository {
 
   Future<Geolocation?> getLocationFromAddress(String address) => _geocoder.getLocationFromAddress(address);
 
+  Future<String> getAddressFromLocation(Geolocation location) => _geocoder.getAddressFromLocation(location);
+
   Future<Geolocation> getDeviceLocation() => _deviceServices.getDeviceLocation();
 
   Future<List<XFile>> getImages(ImageSource source) => _deviceServices.getImages(source);

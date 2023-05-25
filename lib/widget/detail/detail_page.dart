@@ -317,9 +317,7 @@ class _CommentFormState extends State<_CommentForm> {
 
   void _sendComment() {
     if (_key.currentState?.validate() ?? false) {
-      context.read<CommentBloc>().add(
-          CommentAdded(commentText: controller.value.text, todo: widget.todo)
-      );
+      context.read<CommentBloc>().add(CommentAdded(commentText: controller.value.text, todo: widget.todo));
       controller.clear();
       FocusManager.instance.primaryFocus?.unfocus();
     }

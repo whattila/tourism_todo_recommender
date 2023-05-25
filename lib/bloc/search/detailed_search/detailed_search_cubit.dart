@@ -39,7 +39,7 @@ class DetailedSearchCubit extends Cubit<DetailedSearchState> {
       } on DeviceException catch (e) {
         // if an exception occurs, we leave the location null
         // later we can also do additional stuff here if we wish
-      } on InvalidLocation catch (e) {
+      } on LocationException catch (e) {
         // if an exception occurs, we leave the location null
         // later we can also do additional stuff here if we wish
       } catch (_) {

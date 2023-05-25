@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:tourism_todo_recommender/models/geolocation.dart';
@@ -42,7 +41,7 @@ class DeviceServices {
 
     locationData = await _location.getLocation();
     if (locationData.latitude == null || locationData.longitude == null) {
-      throw const InvalidLocation("Device location could not be obtained.");
+      throw const LocationException("Device location could not be obtained.");
     }
     return Geolocation(latitude: locationData.latitude!, longitude: locationData.longitude!);
   }
