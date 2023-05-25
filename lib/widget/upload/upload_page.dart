@@ -309,36 +309,36 @@ class _ImageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final status = context.select((UploadBloc bloc) => bloc.state.uploadStatus);
+    final uploadStatus = context.select((UploadBloc bloc) => bloc.state.uploadStatus);
 
     return Column(
       children: [
         // TODO: replace this with dialog
         ElevatedButton.icon(
-          onPressed: status.isLoadingOrSuccess ? null :() => context.read<UploadBloc>().add(const ImageAddRequested(source: ImageSource.camera)),
+          onPressed: uploadStatus.isLoadingOrSuccess ? null :() => context.read<UploadBloc>().add(const ImageAddRequested(source: ImageSource.camera)),
           icon: const Icon(Icons.camera_alt),
           label: const Text("Take picture with camera"),
           style: ButtonStyle(
-            backgroundColor: status.isLoadingOrSuccess ?
+            backgroundColor: uploadStatus.isLoadingOrSuccess ?
             MaterialStateProperty.all<Color>(Colors.orange.withOpacity(0.5))
                 : MaterialStateProperty.all<Color>(Colors.orange),
-            foregroundColor: status.isLoadingOrSuccess ?
+            foregroundColor: uploadStatus.isLoadingOrSuccess ?
             MaterialStateProperty.all<Color>(Colors.black.withOpacity(0.5))
                 : MaterialStateProperty.all<Color>(Colors.black),
           ),
         ),
         const SizedBox(height: 4),
         ElevatedButton.icon(
-          onPressed: status.isLoadingOrSuccess ?
+          onPressed: uploadStatus.isLoadingOrSuccess ?
           null
               :() => context.read<UploadBloc>().add(const ImageAddRequested(source: ImageSource.gallery)),
           icon: const Icon(Icons.photo_album),
           label: const Text("Select images from gallery"),
           style: ButtonStyle(
-            backgroundColor: status.isLoadingOrSuccess ?
+            backgroundColor: uploadStatus.isLoadingOrSuccess ?
             MaterialStateProperty.all<Color>(Colors.red.withOpacity(0.5))
                 : MaterialStateProperty.all<Color>(Colors.red),
-            foregroundColor: status.isLoadingOrSuccess ?
+            foregroundColor: uploadStatus.isLoadingOrSuccess ?
             MaterialStateProperty.all<Color>(Colors.white.withOpacity(0.5))
                 : MaterialStateProperty.all<Color>(Colors.white),
           ),
