@@ -1,22 +1,29 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const _ = require('lodash');
 const app = admin.initializeApp(functions.config().firebase);
 const firestore = app.firestore();
 
 exports.notifyFollowersOnTodoUpdate = 
 functions.firestore.document('todos/{todoId}').onUpdate(async (event) => {
-    let id = event.after.id
-    let title = event.after.get("shortDescription")
-    let message = {
-        notification: {
-            title: "Favorite todo modified",
-            body: `The details of one your favorite todos, ${title}, has been modified`,
-        },
-        topic: id,
-    };
-
-    let response = await admin.messaging().send(message);
-    console.log(response);
+    let beforeDocument = event.before.data()
+    let afterDocument = event.after.data()
+    delete beforeDocument.rateStatistics
+    delete afterDocument.rateStatistics
+    if (!_.isEqual(beforeDocument, afterDocument)) {
+        let id = event.after.id
+        let title = event.after.get("shortDescription")
+        let body
+        let beforePhotos = event.before.get("imageReferences")
+        let afterPhotos = event.after.get("imageReferences")
+        if (_.isArray(afterPhotos) && _.difference(afterPhotos, beforePhotos).length != 0) {
+            body = "New photos added to this favorite todo"
+        }
+        else {
+            body = "The details of this favorite todo have been modified"
+        }
+        await sendMessage(title, body, id);
+    }
 });
 
 exports.updateRateStatisticsAtCreate = 
@@ -44,6 +51,10 @@ functions.firestore.document('todos/{todoId}/ratings/{ratingId}').onCreate(async
             transaction.update(newRating.ref.parent.parent, {rateStatistics: rateStatistics})
         })
         console.log('Transaction success!');
+        let todo = await newRating.ref.parent.parent.get()
+        let title = todo.get("shortDescription")
+        let uploaderId = todo.get("uploaderId")
+        await sendMessage(title, "The rating of your todo has changed", uploaderId);
     } catch (e) {
       console.log('Transaction failure:', e);
     }
@@ -65,6 +76,10 @@ functions.firestore.document('todos/{todoId}/ratings/{ratingId}').onUpdate(async
             transaction.update(event.after.ref.parent.parent, {rateStatistics: rateStatistics}) // itt szerintem használhatnám az aftert is, vagy van különbség?
         })
         console.log('Transaction success!');
+        let todo = await event.after.ref.parent.parent.get()
+        let title = todo.get("shortDescription")
+        let uploaderId = todo.get("uploaderId")
+        await sendMessage(title, "The rating of your todo has changed", uploaderId);
     } catch (e) {
       console.log('Transaction failure:', e);
     }
@@ -83,6 +98,10 @@ functions.firestore.document('todos/{todoId}/ratings/{ratingId}').onDelete(async
             transaction.update(deletedRating.ref.parent.parent, {rateStatistics: rateStatistics})
         })
         console.log('Transaction success!');
+        let todo = await deletedRating.ref.parent.parent.get()
+        let title = todo.get("shortDescription")
+        let uploaderId = todo.get("uploaderId")
+        await sendMessage(title, "The rating of your todo has changed", uploaderId);
     } catch (e) {
       console.log('Transaction failure:', e);
     }
@@ -94,17 +113,20 @@ functions.firestore.document('todos/{todoId}/comments/{commentId}').onCreate(asy
 	let todo = await todoRef.get()
     let title = todo.get("shortDescription")
     let uploaderId = todo.get("uploaderId")
+    await sendMessage(title, "Someone commented on your todo", uploaderId)
+})
+
+async function sendMessage(title, body, topic) {
     let message = {
         notification: {
-            title: "Comment added",
-            body: `Someone commented on your todo, ${title}`,
+            title: title,
+            body: body,
         },
-        topic: uploaderId,
+        topic: topic,
     };
-
     let response = await admin.messaging().send(message);
     console.log(response);
-})
+}
 
 function ratingsAverage(rateStatistics) {
     rateStatistics.average =

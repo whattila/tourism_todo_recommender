@@ -231,39 +231,44 @@ class _CommentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-          shape: const RoundedRectangleBorder(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                comment.userName,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),),
-              Text(
-                '${comment.yearMonthDay}\n',
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                ),
+    return Column(
+      children: [
+        Card(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              shape: const RoundedRectangleBorder(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    comment.userName,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),),
+                  Text(
+                    '${comment.yearMonthDay}\n',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  Text(
+                    comment.text,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  )
+                ],
               ),
-              Text(
-                comment.text,
-                style: const TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                ),
-              )
-            ],
-          ),
-        );
+            ),
+        const SizedBox(height: 15),
+      ],
+    );
   }
 }
 
