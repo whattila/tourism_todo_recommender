@@ -248,7 +248,7 @@ class _CommentTile extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),),
                   Text(
-                    '${comment.yearMonthDay}\n',
+                    '${comment.formattedDate}\n',
                     style: const TextStyle(
                       fontSize: 15,
                       color: Colors.black,

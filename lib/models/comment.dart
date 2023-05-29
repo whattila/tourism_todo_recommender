@@ -27,7 +27,7 @@ class Comment extends Equatable {
   /// The date in the form to use when displaying it.
   /// TODO: we will switch to a solution with flutter_date_difference if we manage to update Dart SDK.
   @JsonKey(ignore: true)
-  String get yearMonthDay {
+  String get formattedDate {
     var dateString = date.toString();
     var end = dateString.indexOf(' ');
     return dateString.substring(0, end);
