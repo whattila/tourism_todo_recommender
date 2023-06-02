@@ -154,7 +154,7 @@ class FirebaseDataClient extends DataClient {
                 return rating.copyWith(userId: userId, todoId: todoId); // we do this because the server data only includes the value
               }
               else {
-                return Rating.empty; // ha később exists lesz, lecserélődik az empty?
+                return Rating.empty;
               }
             }
         );
